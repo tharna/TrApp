@@ -1,0 +1,24 @@
+{
+  "name": "repo",
+  "version": "1.0.0",
+  "description": "Treeni App",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tharna/trapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tharna/trapp/issues"
+  },
+  "homepage": "https://github.com/tharna/trapp#readme",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "uuid": "^3.1.0"
+  }
+}
