@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css">
+  </head>
+  <body>
+
+    <div class="container" id="form">
+        <conditional-select :categories="categories" :subcategories="subcategories" v-model="treeni"></conditional-select>
+    </div>
+    <div class="container" id="app">
+      <div class="columns medium-3" v-for="excercise in excercises">
+        <div class="card">
+          <div class="card-divider">
+            {{ excercise.excercisename }}
+          </div>
+          <div class="card-section">
+            <p>{{ excercise.excercisetype }}: {{ excercise.amount }}</p>
+
+          </div>
+        </div>
+      </div>
+      <hr>
+      <button class="button" style="display:block;margin:auto;" @click="getExcercises">Hae treenidata</button>
+    </div>
+  </body>
+    <script>
+      Vue.component('conditional-select', {
+        template: `
+      <form>
+        Syötä uusi treeni
+          <div id="ConditionalSelect">
+          <div class="select">
+          <select v-model="category" name="category" @change="sync">
+          <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+          </select>
+          </div>
+
+          <div>
+          <p v-for="subcategory in conditionalSubcategories">{{ subcategory.name }}
+          <input v-model.number="amount" type="number" @change="sync">
+          </p>
+          </div>
+          </div>
+        <button class="button" style="display:block;margin:auto;" @click.prevent="postExcerciseData">Lähetä</button>
+      </form>
+          `,
+
+        props: ['categories', 'subcategories'],
+
+        data() {
+          return {
+            category: 0,
+            amount: '',
+          }
+        },
+        methods: {
+          sync: function () {
+            this.$emit('input', { amount: this.amount, laji: this.category });
+          },
+        postExcerciseData: function() {
+          axios.post("https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data", {
+            excercisename: this.categories.find(category => { return category.id == parseInt(this.category) }).name,
+            excercisetype: this.subcategories.find(category => { return category.category_id == parseInt(this.category)}).name,
+            amount: parseInt(this.amount)
+          }).then(reponse => { Object.assign(this.$data, this.$options.data()) })
+        },
+        },
+        computed: {
+          conditionalSubcategories() {
+            return this.subcategories.filter(subcategory => {
+              return subcategory.category_id == this.category;
+            });
+          },
+        },
+
+        created() {
+          let category = this.categories.find(category => {
+            return category.selected == true;
+          });
+
+          this.category = category.id;
+        }
+      });
+      var vm = new Vue({
+        el: '#app',
+        data: {
+          excercises: [
+          ]
+        },
+        methods: {
+          getExcercises: function() {
+            axios.get("https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data")
+              .then(response => {this.excercises = response.data.excercises})
+          }
+        }
+      });    
+    var frm = new Vue({
+      el: '#form',
+      data: {
+        treeni: {laji: 0, amount: ''},
+        categories: [
+					{ id: '0', name: '-- Valitse laji --', selected: true },
+					{ id: '1', name: 'Juoksu', selected: true },
+					{ id: '2', name: 'Uinti', selected: false },
+					{ id: '3', name: 'Pyöräily', selected: false },
+					{ id: '4', name: 'Kuntosali', selected: false },
+					{ id: '5', name: 'Hyötyliikunta', selected: false },
+					{ id: '6', name: 'Kyykky', selected: false },
+					{ id: '7', name: 'Punnerrus', selected: false },
+        ],
+        subcategories: [
+			{ id: '1', category_id:'1',  name: 'Matka', selected: true },
+			{ id: '2', category_id:'2',  name: 'Matka', selected: true },
+			{ id: '3', category_id:'3',  name: 'Matka', selected: true },
+			{ id: '4', category_id:'4',  name: 'Aika', selected: true },
+			{ id: '5', category_id:'5',  name: 'Aika', selected: true },
+			{ id: '6', category_id:'6',  name: 'Toistot', selected: true },
+			{ id: '7', category_id:'7',  name: 'Toistot', selected: true },
+		]
+      },
+      methods: {
+
+      }
+    });
+    </script>
+</html>
