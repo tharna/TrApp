@@ -23,6 +23,9 @@ module.exports.submit = (event, context, callback) => {
     .then(res => {
       callback(null, {
         statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
         body: JSON.stringify({
           message: 'Sucessfully submitted excercise data',
           candidateId: res.id
@@ -56,6 +59,9 @@ module.exports.get = (event, context, callback) => {
             console.log("Scan succeeded.");
             return callback(null, {
                 statusCode: 200,
+                headers: {
+                  "Access-Control-Allow-Origin": "*"
+                },
                 body: JSON.stringify({
                     excercises: data.Items
                 })
@@ -85,6 +91,9 @@ module.exports.getByType = (event, context, callback) => {
       console.log("Scan succeeded.");
       return callback(null, {
         statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
         body: JSON.stringify({
           excercises: data.Items
         })
