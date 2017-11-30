@@ -155,4 +155,11 @@ resources:
           StreamViewType: "NEW_AND_OLD_IMAGES"
         TableName: ${self:provider.environment.EXCERCISE_TABLE}
 
+plugins:
+  - serverless-finch
 
+
+custom:
+  client:
+    bucketName: aikojentanssi
+    distributionFolder: frontend

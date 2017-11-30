@@ -4,11 +4,36 @@
     <meta charset="utf-8">
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- import CSS -->
+<link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
+<!-- import JavaScript -->
+<script src="https://unpkg.com/mint-ui/lib/index.js"></script>
+<script src="https://unpkg.com/vuetrend/dist/vue-trend.js"></script>
+<script src="https://unpkg.com/vue-toast-mobile/src/index.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css">
   </head>
   <body>
 
     <div class="container" id="form">
+      Aktiivisuus viimeisen viikon aikana:
+      <trend
+  :data="[3, 6, 9, 5, 10, 3, 7, 8, 3, 9]"
+  :gradient="['#ff0000', '#ff5d00', '#ffff00', '#00ff00']"
+  :stroke-width="4"
+  auto-draw
+  smooth>
+</trend>
+        Heimon viikkotavoite:
+        <mt-actionsheet
+            :actions="actions"
+              cancel-text=""
+              v-model="sheetVisible">
+          </mt-actionsheet>
+
+        <mt-progress :value="20" :bar-height="10" @click.native="heimoTavoite"></mt-progress>
+        Henkilökohtainen viikkotavoite:
+        <mt-progress :value="60" :bar-height="10"></mt-progress>
         <conditional-select :categories="categories" :subcategories="subcategories" v-model="treeni"></conditional-select>
     </div>
     <div class="container" id="app">
@@ -66,7 +91,7 @@
             excercisename: this.categories.find(category => { return category.id == parseInt(this.category) }).name,
             excercisetype: this.subcategories.find(category => { return category.category_id == parseInt(this.category)}).name,
             amount: parseInt(this.amount)
-          }).then(reponse => { Object.assign(this.$data, this.$options.data()) })
+          }).then(reponse => { Object.assign(this.$data, this.$options.data()); })
         },
         },
         computed: {
@@ -102,6 +127,11 @@
       el: '#form',
       data: {
         treeni: {laji: 0, amount: ''},
+        sheetVisible: false,
+        actions: [
+          { name: "Kyllä" },
+          { name: "Ei" }
+        ],
         categories: [
 					{ id: '0', name: '-- Valitse laji --', selected: true },
 					{ id: '1', name: 'Juoksu', selected: true },
@@ -123,6 +153,9 @@
 		]
       },
       methods: {
+        heimoTavoite: function() {
+          this.sheetVisible = true;
+        }
 
       }
     });
