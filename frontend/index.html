@@ -7,16 +7,10 @@
 
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <!-- import CSS -->
-<link rel="stylesheet" href="https://unpkg.com/mint-ui/lib/style.css">
-<!-- import JavaScript -->
-<script src="https://unpkg.com/mint-ui/lib/index.js"></script>
-<script src="https://unpkg.com/vuetrend/dist/vue-trend.js"></script>
+    <script src="https://unpkg.com/vuetrend/dist/vue-trend.js"></script>
 
-<!-- import CSS -->
-<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-<!-- import JavaScript -->
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css">
   </head>
   <body>
@@ -176,7 +170,7 @@
             <el-col :span="24">
               Aktiivisuus viimeisen viikon aikana:
               <trend
-                :data="[3, 6, 9, 5, 10, 3, 7, 8, 3, 9]"
+                :data="[6, 9, 5, 10, 3, 8, 6]"
                 :gradient="['#ff0000', '#ff5d00', '#ffff00', '#00ff00']"
                 :stroke-width="4"
                 auto-draw
@@ -187,19 +181,35 @@
           <el-row>
             <el-col :span="24">
               Heimon viikkotavoite:
-              <mt-actionsheet
-                :actions="actions"
-                cancel-text=""
-                v-model="sheetVisible">
-              </mt-actionsheet>
-
-              <el-progress :percentage="20" :stroke-width="16" @click.native="heimoTavoite"></el-progress>
+               <el-progress :percentage="20" :stroke-width="16" @click.native="heimoDialogVisible = true"></el-progress>
+               <el-dialog
+                 title="Heimon viikkotavoite"
+                 :visible.sync="heimoDialogVisible"
+                 width="80%">
+                 <span>Juoskaa yhteensä 100 km</span><br>
+                 Suoritus: <input type="text">
+                 <span slot="footer" class="dialog-footer">
+                 <el-button @click.native="heimoDialogVisible = false" round>Peruuta</el-button>
+                 <el-button type="primary" @click.native="heimoDialogVisible = false" round>Lähetä</el-button>
+                 </span>
+               </el-dialog>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
               Henkilökohtainen viikkotavoite:
-              <el-progress :percentage="100" :stroke-width="16" status="success"></el-progress>
+              <el-progress :percentage="100" :stroke-width="16" status="success" @click.native="omaDialogVisible = true"></el-progress>
+               <el-dialog
+                 title="Henkilökohtainen viikkotavoite"
+                 :visible.sync="omaDialogVisible"
+                 width="80%">
+                 <span>Venyttele joka päivä.</span><br>
+                 <span slot="footer" class="dialog-footer">
+                 Suoritettu: 
+                 <el-button @click.native="omaDialogVisible = false" round>Ei</el-button>
+                 <el-button type="primary" @click.native="omaDialogVisible = false" round>Kyllä</el-button>
+                 </span>
+               </el-dialog>
             </el-col>
           </el-row>
           <el-row>
@@ -212,7 +222,8 @@
       data() {
         return {
         treeni: {laji: 0, amount: ''},
-        sheetVisible: false,
+        heimoDialogVisible: false,
+        omaDialogVisible: false,
         actions: [
           { name: "Kyllä" },
           { name: "Ei" }
@@ -238,12 +249,6 @@
 		]
       }
       },
-      methods: {
-        heimoTavoite: function() {
-          this.sheetVisible = true;
-        },
-
-      }
       });
 
 
