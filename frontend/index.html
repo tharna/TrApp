@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- import CSS -->
@@ -9,50 +12,99 @@
 <!-- import JavaScript -->
 <script src="https://unpkg.com/mint-ui/lib/index.js"></script>
 <script src="https://unpkg.com/vuetrend/dist/vue-trend.js"></script>
-<script src="https://unpkg.com/vue-toast-mobile/src/index.js"></script>
 
+<!-- import CSS -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.1/css/foundation.min.css">
   </head>
   <body>
 
-    <div class="container" id="form">
-      Aktiivisuus viimeisen viikon aikana:
-      <trend
-  :data="[3, 6, 9, 5, 10, 3, 7, 8, 3, 9]"
-  :gradient="['#ff0000', '#ff5d00', '#ffff00', '#00ff00']"
-  :stroke-width="4"
-  auto-draw
-  smooth>
-</trend>
-        Heimon viikkotavoite:
-        <mt-actionsheet
-            :actions="actions"
-              cancel-text=""
-              v-model="sheetVisible">
-          </mt-actionsheet>
-
-        <mt-progress :value="20" :bar-height="10" @click.native="heimoTavoite"></mt-progress>
-        Henkilökohtainen viikkotavoite:
-        <mt-progress :value="60" :bar-height="10"></mt-progress>
-        <conditional-select :categories="categories" :subcategories="subcategories" v-model="treeni"></conditional-select>
-    </div>
-    <div class="container" id="app">
-      <div class="columns medium-3" v-for="excercise in excercises">
-        <div class="card">
-          <div class="card-divider">
-            {{ excercise.excercisename }}
-          </div>
-          <div class="card-section">
-            <p>{{ excercise.excercisetype }}: {{ excercise.amount }}</p>
-
-          </div>
-        </div>
-      </div>
-      <hr>
-      <button class="button" style="display:block;margin:auto;" @click="getExcercises">Hae treenidata</button>
+    <div id="main">
+      <template>
+        <el-tabs v-model="activeName">
+          <el-tab-pane label="Edistyminen" name="first">
+              <activity></activity>
+          </el-tab-pane>
+          <el-tab-pane label="Treenit" name="second">
+            <excercise-list></excercise-list>
+          </el-tab-pane>
+          <el-tab-pane label="Saavutukset" name="third">
+            <achivements></achivements>
+          </el-tab-pane>
+        </el-tabs>
+      </template>
     </div>
   </body>
+
     <script>
+      Vue.component('achivements', {
+        template: `
+          <div>
+            <el-row v-for="achivement in achievements"  :key="achivement.name">
+              <el-col :span="4">
+                <div style="text-align: center;">
+                <el-progress type="circle" :percentage="achivement.progress" :status="achivement.status" :width="55"></el-progress>
+                </div>
+              </el-col>
+              <el-col :span="20">
+                <div><h4>{{ achivement.name }}</h4>{{ achivement.goal }}</div>
+                <hr>
+              </el-col>
+            </el-row>
+          </div>
+          `,
+          data() {
+            return {
+              achievements: [
+              { name: "Juoksija", goal: "Juokse yhteensä 100km", progress: 25, status: "" },
+              { name: "Kiipijä", goal: "Nouse yhteensä 1000 rappusta", progress: 40, status: "" },
+              { name: "Vesipeto", goal: "Ui yhteensä 10km", progress: 100, status: "success" },
+              { name: "Punnertaja", goal: "Tee 100 punnerrusta kerralla", progress: 0, status: "exception" },
+              ],
+            }
+          },
+      });
+      Vue.component('excercise-list', {
+        template: `
+          <div>
+            <el-row>
+              <el-col :span="24">
+                <div class="columns medium-3" v-for="excercise in excercises">
+                  <div class="card">
+                    <div class="card-divider">
+                      {{ excercise.excercisename }}
+                    </div>
+                    <div class="card-section">
+                      <p>{{ excercise.excercisetype }}: {{ excercise.amount }}</p>
+                    </div>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="24">
+                <hr>
+                <div style="text-align: center;"><el-button type="primary" @click="getExcercises" round>Hae treenidata</el-button></div>
+              </el-col>
+            </el-row>
+          </div>
+      `,
+        data() {
+          return {
+            excercises: [
+            ],
+          }
+        },
+        methods: {
+          getExcercises: function() {
+            axios.get("https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data")
+              .then(response => {this.excercises = response.data.excercises})
+          },
+        }
+      });
+      
       Vue.component('conditional-select', {
         template: `
       <form>
@@ -66,11 +118,11 @@
 
           <div>
           <p v-for="subcategory in conditionalSubcategories">{{ subcategory.name }}
-          <input v-model.number="amount" type="number" @change="sync">
+        <el-input-number v-model="amount" :min="1" :step="0.10" @change="sync"></el-input-number>
           </p>
           </div>
           </div>
-        <button class="button" style="display:block;margin:auto;" @click.prevent="postExcerciseData">Lähetä</button>
+          <div style="text-align:center;"><el-button type="primary" round @click.prevent="postExcerciseData">Lähetä</el-button></div>
       </form>
           `,
 
@@ -91,7 +143,14 @@
             excercisename: this.categories.find(category => { return category.id == parseInt(this.category) }).name,
             excercisetype: this.subcategories.find(category => { return category.category_id == parseInt(this.category)}).name,
             amount: parseInt(this.amount)
-          }).then(reponse => { Object.assign(this.$data, this.$options.data()); })
+          }).then(reponse => { 
+            Object.assign(this.$data, this.$options.data()); 
+          	this.$notify({
+          		title: 'Success',
+          		message: 'Treeni lisätty',
+          		type: 'success'
+        		});
+          })
         },
         },
         computed: {
@@ -110,22 +169,48 @@
           this.category = category.id;
         }
       });
-      var vm = new Vue({
-        el: '#app',
-        data: {
-          excercises: [
-          ]
-        },
-        methods: {
-          getExcercises: function() {
-            axios.get("https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data")
-              .then(response => {this.excercises = response.data.excercises})
-          }
-        }
-      });    
-    var frm = new Vue({
-      el: '#form',
-      data: {
+    Vue.component('activity', {
+      template: `
+        <div>
+          <el-row>
+            <el-col :span="24">
+              Aktiivisuus viimeisen viikon aikana:
+              <trend
+                :data="[3, 6, 9, 5, 10, 3, 7, 8, 3, 9]"
+                :gradient="['#ff0000', '#ff5d00', '#ffff00', '#00ff00']"
+                :stroke-width="4"
+                auto-draw
+                smooth>
+              </trend>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              Heimon viikkotavoite:
+              <mt-actionsheet
+                :actions="actions"
+                cancel-text=""
+                v-model="sheetVisible">
+              </mt-actionsheet>
+
+              <el-progress :percentage="20" :stroke-width="16" @click.native="heimoTavoite"></el-progress>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              Henkilökohtainen viikkotavoite:
+              <el-progress :percentage="100" :stroke-width="16" status="success"></el-progress>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <conditional-select :categories="categories" :subcategories="subcategories" v-model="treeni"></conditional-select>
+            </el-col>
+          </el-row>
+        </div>
+        `,
+      data() {
+        return {
         treeni: {laji: 0, amount: ''},
         sheetVisible: false,
         actions: [
@@ -151,13 +236,25 @@
 			{ id: '6', category_id:'6',  name: 'Toistot', selected: true },
 			{ id: '7', category_id:'7',  name: 'Toistot', selected: true },
 		]
+      }
       },
       methods: {
         heimoTavoite: function() {
           this.sheetVisible = true;
-        }
+        },
 
       }
-    });
-    </script>
+      });
+
+
+ var Main = {
+    data() {
+      return {
+        activeName: 'first'
+      };
+    },
+  };
+var Ctor = Vue.extend(Main);
+new Ctor().$mount('#main');
+        </script>
 </html>
