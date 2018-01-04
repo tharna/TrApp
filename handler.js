@@ -123,6 +123,7 @@ module.exports.getByType = (event, context, callback) => {
 };
 */
 module.exports.getActivity = (event, context, callback) => {
+  console.log( 'Request Headers:', event.headers)
   checkActivity();
   var params = {
       TableName: process.env.ACTIVITY_TABLE,
@@ -135,6 +136,7 @@ module.exports.getActivity = (event, context, callback) => {
         ":user": user
       }
   };
+  // TODO filter only 7 days
 
   console.log("Scanning exercise table.");
   const onScan = (err, data) => {
@@ -183,10 +185,45 @@ module.exports.getUser = (event, context, callback) => {
           "Access-Control-Allow-Origin": "*"
         },
         body: JSON.stringify({
-          user: data.Item
+          user: calculateLevels(data.Item)
         })
       });
     }
+  };
+
+  const calculateLevels = (item) => {
+    var sum = 0;
+    var level = 0;
+    item.current = {};
+    while (sum + level < item.level.fire) {
+      level++;
+      sum += level;
+    }
+    item.level.fire = Math.round(item.level.fire / (sum + level +1) * 100);
+    item.current.fire = level;
+    sum = 0; level = 0;
+    while (sum + level < item.level.water) {
+      level++;
+      sum += level;
+    }
+    item.level.water = Math.round(item.level.water / (sum + level +1) * 100);
+    item.current.water = level;
+    sum = 0; level = 0;
+    while (sum + level < item.level.earth) {
+      level++;
+      sum += level;
+    }
+    item.level.earth = Math.round(item.level.earth / (sum + level +1) * 100);
+    item.current.earth = level;
+    sum = 0; level = 0;
+    while (sum + level < item.level.air) {
+      level++;
+      sum += level;
+    }
+    item.level.air = Math.round(item.level.air / (sum + level +1) * 100);
+    item.current.air = level;
+    console.log(item);
+    return item;
   };
 
   dynamoDb.get(params, onScan);
@@ -265,8 +302,9 @@ const updateLevels = (amount, exercisename) => {
     Key: {
       userID: user,
     },
-    UpdateExpression: "add level.#element :amount",
+    UpdateExpression: "SET #level.#element = #level.#element + :amount",
     ExpressionAttributeNames: {
+      "#level": "level",
       "#element": element,
     },
     ExpressionAttributeValues: {
