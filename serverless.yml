@@ -135,5 +135,5 @@ plugins:
 
 custom:
   client:
-    bucketName: aikojentanssi
-    distributionFolder: frontend
+    bucketName: app.aikojentanssi.fi
+    distributionFolder: spa/dist

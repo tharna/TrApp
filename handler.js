@@ -2,15 +2,19 @@
 
 const uuid = require('uuid');
 const AWS = require('aws-sdk'); 
+const jwt = require('jsonwebtoken');
 
 AWS.config.setPromisesDependency(require('bluebird'));
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-const user = "test";
+var user = ''
+var userInfo = {}
 
 
 module.exports.submit = (event, context, callback) => {
+
+  setUserInfo(event) 
   const requestBody = JSON.parse(event.body);
   const exercisename = requestBody.exercisename;
   const exercisetype = requestBody.exercisetype;
@@ -51,6 +55,7 @@ module.exports.submit = (event, context, callback) => {
 };
 
 module.exports.get = (event, context, callback) => {
+  setUserInfo(event) 
     var params = {
         TableName: process.env.EXERCISE_TABLE,
         ProjectionExpression: "exercisename, exercisetype, amount, note",
@@ -123,7 +128,8 @@ module.exports.getByType = (event, context, callback) => {
 };
 */
 module.exports.getActivity = (event, context, callback) => {
-  console.log( 'Request Headers:', event.headers)
+  setUserInfo(event) 
+
   checkActivity();
   var params = {
       TableName: process.env.ACTIVITY_TABLE,
@@ -164,32 +170,39 @@ module.exports.getActivity = (event, context, callback) => {
 };
 
 module.exports.getUser = (event, context, callback) => {
-  checkUser();
+  setUserInfo(event);
+  checkUser().then(res => {
 
-  var params = {
+    var params = {
       TableName: process.env.USER_TABLE,
       Key: {
         userID: user,
       },
-  };
+    };
 
-  const onScan = (err, data) => {
-    if (err) {
-      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
-      callback(err);
-    } else {
-      console.log("Scan succeeded.");
-      return callback(null, {
-        statusCode: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*"
-        },
-        body: JSON.stringify({
-          user: calculateLevels(data.Item)
-        })
-      });
-    }
-  };
+    const onScan = (err, data) => {
+      if (err) {
+        console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
+        callback(err);
+      } else {
+        console.log("Scan succeeded.");
+        return callback(null, {
+          statusCode: 200,
+          headers: {
+            "Access-Control-Allow-Origin": "*"
+          },
+          body: JSON.stringify({
+            user: calculateLevels(data.Item)
+          })
+        });
+      }
+    };
+    dynamoDb.get(params, onScan);
+
+  })
+  .catch(err => {
+    console.log("Error fetching user:", err);
+  });
 
   const calculateLevels = (item) => {
     var sum = 0;
@@ -226,7 +239,6 @@ module.exports.getUser = (event, context, callback) => {
     return item;
   };
 
-  dynamoDb.get(params, onScan);
 };
 
 
@@ -356,7 +368,7 @@ const checkUser = () => {
       }
   };
 
-  dynamoDb.get(params, onScan);
+  return dynamoDb.get(params, onScan).promise();
 }
 
 const addUser = userData => {
@@ -422,4 +434,9 @@ const addActivity = activity => {
   console.log("Adding new activity record.");
   return dynamoDb.put(activityInfo).promise()
     .then(res => activity);
+}
+
+const setUserInfo = event => {
+  userInfo = jwt.decode(event.headers['Authorization'].substr(7));
+  user = userInfo.email;
 }
