@@ -235,7 +235,6 @@ module.exports.getUser = (event, context, callback) => {
     }
     item.level.air = Math.round(item.level.air / (sum + level +1) * 100);
     item.current.air = level;
-    console.log(item);
     return item;
   };
 
@@ -331,10 +330,10 @@ const updateLevels = (amount, exercisename) => {
 const getElement = (exercisename) => {
   // TODO actually get element based on exercise type
   const elements = {
-    Juoksu: "earth",
-    Kuntosali: "fire",
-    Uinti: "water",
-    Pyöräily: "air",
+    Lihaskunto: "fire",
+    Kestävyys: "earth",
+    Ketteryys: "water",
+    Kehonhuolto: "air",
   }
   return elements[exercisename];
 }

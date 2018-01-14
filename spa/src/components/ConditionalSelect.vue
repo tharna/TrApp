@@ -9,8 +9,12 @@
       </div>
 
       <div>
-        <p v-for="subcategory in conditionalSubcategories">{{ subcategory.name }}
-        <el-input-number v-model="amount" :min="1" :step="0.10" @change="sync"></el-input-number>
+        <div class="select">
+          <select v-model="subcategory" name="subcategory" @change="sync">
+            <option v-for="subcategory in conditionalSubcategories" :value="subcategory.id" :selected="subcategory.selected == true">{{ subcategory.name }}</option>
+          </select>
+        </div>
+        <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number>
         </p>
       </div>
     </div>
@@ -25,12 +29,13 @@ export default {
   data () {
     return {
       category: 0,
-      amount: ''
+      amount: '',
+      subcategory: 0
     }
   },
   methods: {
     sync: function () {
-      this.$emit('input', { amount: this.amount, laji: this.category })
+      this.$emit('input', { amount: this.amount, laji: this.category, type: this.subcategory })
     },
     postExerciseData: function () {
       axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data', {

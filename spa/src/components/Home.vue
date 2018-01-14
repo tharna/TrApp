@@ -23,7 +23,12 @@
         </el-tabs>
   </div>
     <h4 v-else-if="!authenticated">
-      <a @click="auth.login()">Kirjaudu sisään</a>.
+          <el-button
+            @click="auth.login()"
+            type="primary" 
+            round>
+            Kirjaudu sisään
+          </el-button>
     </h4>
 </template>
 
