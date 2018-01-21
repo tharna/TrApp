@@ -9,6 +9,8 @@ provider:
     USER_TABLE: "userdata-${opt:stage, self:provider.stage}"
     EXERCISE_TABLE: "exercisedata-${opt:stage, self:provider.stage}"
     ACTIVITY_TABLE: "activitydata-${opt:stage, self:provider.stage}"
+    ACHIEVEMENT_TABLE: "achievement-${opt:stage, self:provider.stage}"
+    QUEST_TABLE: "quest-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -60,7 +62,30 @@ functions:
           path: data/user
           method: get
           cors: true
-
+  getQuests:
+    memorySize: 128
+    handler: handler.getQuests
+    events:
+      - http:
+          path: data/quest
+          method: get
+          cors: true
+  addQuest:
+    memorySize: 128
+    handler: handler.addQuest
+    events:
+      - http:
+          path: data/quest
+          method: post
+          cors: true
+  getAchievements:
+    memorySize: 128
+    handler: handler.getAchievements
+    events:
+      - http:
+          path: data/achievement
+          method: get
+          cors: true
 resources:
   Resources:
     UserDynamoDbTable:
@@ -129,7 +154,54 @@ resources:
         StreamSpecification:
           StreamViewType: "NEW_AND_OLD_IMAGES"
         TableName: ${self:provider.environment.ACTIVITY_TABLE}
-
+    AchievementDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "userID"
+            AttributeType: "S"
+          -
+            AttributeName: "achievementID"
+            AttributeType: "S"
+        KeySchema:
+          -
+            AttributeName: "userID"
+            KeyType: "HASH"
+          -
+            AttributeName: "achievementID"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.ACHIEVEMENT_TABLE}
+    QuestDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "questID"
+            AttributeType: "S"
+          -
+            AttributeName: "groupID"
+            AttributeType: "S"
+        KeySchema:
+          -
+            AttributeName: "questID"
+            KeyType: "HASH"
+          -
+            AttributeName: "groupID"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.QUEST_TABLE}
 plugins:
   - serverless-finch
 

@@ -58,11 +58,15 @@ module.exports.get = (event, context, callback) => {
   setUserInfo(event) 
     var params = {
         TableName: process.env.EXERCISE_TABLE,
-        ProjectionExpression: "exercisename, exercisetype, amount, note",
+        ProjectionExpression: "exercisename, exercisetype, amount, note, #date",
+        ExpressionAttributeNames: {
+          "#date": "date",
+        },
         KeyConditionExpression: "userID = :user",
         ExpressionAttributeValues: {
           ":user": user
-        }
+        },
+        ScanIndexForward: false
     };
 
     console.log("Scanning exercise table.");
@@ -130,16 +134,22 @@ module.exports.getByType = (event, context, callback) => {
 module.exports.getActivity = (event, context, callback) => {
   setUserInfo(event) 
 
+  var date = new Date();
+  date.setDate(date.getDate() - 7);
+  var dateString = date.toISOString().substr(0, 10);
+  console.log(dateString)
   checkActivity();
   var params = {
       TableName: process.env.ACTIVITY_TABLE,
-      ProjectionExpression: "#total",
+      ProjectionExpression: "#total, #date",
+      KeyConditionExpression: "userID = :user AND #date > :date",
       ExpressionAttributeNames: {
         "#total": "total",
+        "#date": "date",
       },
-      KeyConditionExpression: "userID = :user",
       ExpressionAttributeValues: {
-        ":user": user
+        ":user": user,
+        ":date": dateString
       }
   };
   // TODO filter only 7 days
@@ -152,13 +162,28 @@ module.exports.getActivity = (event, context, callback) => {
           callback(err);
       } else {
           console.log("Scan succeeded.");
+          console.log("ActivityData:", data.Items)
+          var activity = new Array()
+          var result;
+          for(var i=7;i--;i>=0) {
+            date = new Date()
+            date.setDate(date.getDate() - i)
+            dateString = date.toISOString().substr(0, 10)
+            if(result = data.Items.find(item => { return item.date === dateString })) {
+              console.log(result)
+              activity.push(result.total)
+            } else {
+              activity.push(0)
+            }
+             
+          }
           return callback(null, {
               statusCode: 200,
               headers: {
                 "Access-Control-Allow-Origin": "*"
               },
               body: JSON.stringify({
-                  activity: data.Items
+                  activity: activity
               })
           });
       }
@@ -207,33 +232,34 @@ module.exports.getUser = (event, context, callback) => {
   const calculateLevels = (item) => {
     var sum = 0;
     var level = 0;
+    const levelMultiplier = 4;
     item.current = {};
-    while (sum + level < item.level.fire) {
+    while (sum + level * levelMultiplier < item.level.fire) {
       level++;
-      sum += level;
+      sum += level * levelMultiplier;
     }
-    item.level.fire = Math.round(item.level.fire / (sum + level +1) * 100);
+    item.level.fire = Math.round(item.level.fire / (sum + (level +1) * levelMultiplier) * 100);
     item.current.fire = level;
     sum = 0; level = 0;
-    while (sum + level < item.level.water) {
+    while (sum + level * levelMultiplier < item.level.water) {
       level++;
-      sum += level;
+      sum += level * levelMultiplier;
     }
-    item.level.water = Math.round(item.level.water / (sum + level +1) * 100);
+    item.level.water = Math.round(item.level.water / (sum + (level +1) * levelMultiplier) * 100);
     item.current.water = level;
     sum = 0; level = 0;
-    while (sum + level < item.level.earth) {
+    while (sum + level * levelMultiplier < item.level.earth) {
       level++;
-      sum += level;
+      sum += level * levelMultiplier;
     }
-    item.level.earth = Math.round(item.level.earth / (sum + level +1) * 100);
+    item.level.earth = Math.round(item.level.earth / (sum + (level +1) * levelMultiplier) * 100);
     item.current.earth = level;
     sum = 0; level = 0;
-    while (sum + level < item.level.air) {
+    while (sum + level * levelMultiplier< item.level.air) {
       level++;
-      sum += level;
+      sum += level * levelMultiplier;
     }
-    item.level.air = Math.round(item.level.air / (sum + level +1) * 100);
+    item.level.air = Math.round(item.level.air / (sum + (level +1) * levelMultiplier) * 100);
     item.current.air = level;
     return item;
   };
@@ -307,7 +333,6 @@ const updateActivity = (amount) => {
 
 const updateLevels = (amount, exercisename) => {
   const element = getElement(exercisename);
-  console.log(element);
   const levelInfo = {
     TableName: process.env.USER_TABLE,
     Key: {
@@ -381,6 +406,7 @@ const addUser = userData => {
         water: 0,
         air: 0,
       },
+      group: 0,
     },
   };
   console.log("Adding new user.");
@@ -403,7 +429,6 @@ const checkActivity = () => {
       if (err) {
         console.log("Activity scan failed.");
       } else {
-        console.log(data);
         if (!data.Item) {
           addActivity()
           .then(res => {

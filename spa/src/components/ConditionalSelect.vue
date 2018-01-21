@@ -40,7 +40,7 @@ export default {
     postExerciseData: function () {
       axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data', {
         exercisename: this.categories.find(category => { return category.id === this.category }).name,
-        exercisetype: this.subcategories.find(category => { return category.category_id === this.category }).name,
+        exercisetype: this.subcategories.find(category => { return category.id === this.subcategory }).name,
         amount: parseInt(this.amount)
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())

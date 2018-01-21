@@ -149,7 +149,7 @@ export default {
     getActivity: function () {
       axios.get('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data/activity')
         .then(response => {
-          this.activity = response.data.activity.map((amount) => { return amount.total })
+          this.activity = response.data.activity // .activity.map((amount) => { return amount.total })
         })
     },
     getUserData: function () {
