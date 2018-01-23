@@ -1,8 +1,8 @@
 {
-  "name": "auth0-vue-samples",
+  "name": "Trapp",
   "version": "1.0.0",
-  "description": "A Vue.js project",
-  "author": "Auth0",
+  "description": "Treeni App",
+  "author": "janne@arcticloon.fi",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",

@@ -70,14 +70,6 @@ functions:
           path: data/quest
           method: get
           cors: true
-  addQuest:
-    memorySize: 128
-    handler: handler.addQuest
-    events:
-      - http:
-          path: data/quest
-          method: post
-          cors: true
   getAchievements:
     memorySize: 128
     handler: handler.getAchievements
@@ -86,6 +78,32 @@ functions:
           path: data/achievement
           method: get
           cors: true
+  ## ADMIN
+  listQuests:
+    memorySize: 128
+    handler: admin.listQuests
+    events:
+      - http:
+          path: admin/quest
+          method: get
+          cors: true
+  addQuest:
+    memorySize: 128
+    handler: admin.addQuest
+    events:
+      - http:
+          path: admin/quest/add
+          method: post
+          cors: true
+  updateQuest:
+    memorySize: 128
+    handler: admin.updateQuest
+    events:
+      - http:
+          path: admin/quest/update
+          method: post
+          cors: true
+
 resources:
   Resources:
     UserDynamoDbTable:

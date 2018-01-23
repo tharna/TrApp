@@ -19,17 +19,18 @@
             round>
             Kirjaudu ulos
           </el-button>
+          <router-link to="/admin" v-if="admin">Ylläpitoon</router-link>
           </el-tab-pane>
         </el-tabs>
   </div>
-    <h4 v-else-if="!authenticated">
+    <div v-else-if="!authenticated" style="text-align:center; padding-top: 50px;">
           <el-button
             @click="auth.login()"
             type="primary" 
             round>
             Kirjaudu sisään
           </el-button>
-    </h4>
+    </div>
 </template>
 
 <script>
@@ -41,14 +42,21 @@ export default {
   props: ['auth', 'authenticated'],
   data () {
     return {
-      activeName: 'first'
+      activeName: 'first',
+      admin: false
     }
   },
   components: {
     Activity,
     Exercises,
     Achievements
+  },
+  created () {
+    var user = JSON.parse(localStorage.getItem('user_details'))
+    console.log(user)
+    this.admin = this.authenticated && (user['https://app.aikojentanssi.fi/group'] === 99)
   }
+
 }
 </script>
 

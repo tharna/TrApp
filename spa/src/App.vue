@@ -13,7 +13,8 @@
 import AuthService from './auth/AuthService'
 import Vue from 'vue'
 import Element from 'element-ui'
-Vue.use(Element)
+import locale from 'element-ui/lib/locale/lang/fi'
+Vue.use(Element, { locale })
 
 const auth = new AuthService()
 
