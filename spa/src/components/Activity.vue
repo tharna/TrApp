@@ -67,7 +67,9 @@
     </el-row>
     <el-row>
       <el-col :span="24">
+    <div style="text-align:center; padding-top: 50px;">
           <el-button @click="addExerciseVisible = true" type="primary" round>Lisää suoritus</el-button>
+    </div>
         <el-dialog
             title="Lisää suoritus"
             :visible.sync="addExerciseVisible"

@@ -2,8 +2,17 @@
   <div>
     <el-row>
       <el-col :span="24">
+        <div style="padding: 5px 20px; text-align: center;">
+         <el-radio v-model="type" label="Kaikki">Kaikki</el-radio>
+         <el-radio v-model="type" label="Lihaskunto">Lihaskunto</el-radio>
+         <el-radio v-model="type" label="Ketteryys">Ketteryys</el-radio>
+         <el-radio v-model="type" label="Kestävyys">Kestävyys</el-radio>
+         <el-radio v-model="type" label="Kehonhuolto">Kehonhuolto</el-radio>
+        </div>
+      </el-col>
+      <el-col :span="24">
         <div class="columns medium-3" v-for="exercise in exercises">
-          <div class="card">
+          <div class="card" v-show="type == exercise.exercisename || type == 'Kaikki'">
             <div class="card-divider">
               {{ exercise.exercisename }}
             </div>
@@ -12,12 +21,6 @@
             </div>
           </div>
         </div>
-      </el-col>
-    </el-row>
-    <el-row>
-      <el-col :span="24">
-        <hr>
-        <div style="text-align: center;"><el-button type="primary" @click="getExercises" round>Hae treenidata</el-button></div>
       </el-col>
     </el-row>
   </div>
@@ -30,7 +33,8 @@ export default {
   data () {
     return {
       exercises: [
-      ]
+      ],
+      type: 'Kaikki'
     }
   },
   methods: {

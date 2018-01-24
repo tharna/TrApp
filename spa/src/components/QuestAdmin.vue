@@ -29,11 +29,30 @@
         <el-input v-model="questSuccess" placeholder="Onnistumisviesti" type="textarea"></el-input>
         <el-input v-model="questFailure" placeholder="Epäonnistumisviesti" type="textarea"></el-input>
         <el-row>
-          <el-col :span="12">
-            <el-input v-model="questType"></el-input>
-
+          <el-col :span="6">
+            <el-radio v-model="questScope" label="1">Yksilö</el-radio>
+            <el-radio v-model="questScope" label="2">Heimo</el-radio>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="6">
+            <el-radio v-model="questType" label="1">Toistot</el-radio>
+            <el-radio v-model="questType" label="2">Määrä</el-radio>
+          </el-col>
+          <el-col :span="6">
+            <el-radio v-model="questRepeat" label="1">Per päivä</el-radio>
+            <el-radio v-model="questRepeat" label="2">Per viikko</el-radio>
+          </el-col>
+
+          <!--el-col :span="8">
+            <el-select v-model="questType" placeholder="Tyyppi">
+               <el-option
+                  v-for="item in questTypes"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col-->
+          <el-col :span="6">
             <el-select v-model="questGroup" placeholder="Heimo">
               <el-option
                   v-for="item in groups"
@@ -103,12 +122,47 @@ export default {
       datePickerOpts: {
         firstDayOfWeek: 1
       },
+      questScope: '1',
       groups: [{
         value: 1,
-        label: 'asdf'
+        label: 'Kekäle'
       }, {
         value: 2,
-        label: 'asdf'
+        label: 'Kvantti'
+      }, {
+        value: 3,
+        label: 'Loharit'
+      }, {
+        value: 4,
+        label: 'Lopparit'
+      }, {
+        value: 5,
+        label: 'Manse'
+      }, {
+        value: 6,
+        label: 'Pöllöt'
+      }, {
+        value: 7,
+        label: 'Tammi'
+      }, {
+        value: 8,
+        label: 'Karhut'
+      }],
+      questTypes: [{
+        value: 1,
+        label: 'Toistot (per viikko)'
+      }, {
+        value: 2,
+        label: 'Määrä (per päivä)'
+      }, {
+        value: 3,
+        label: ''
+      }, {
+        value: 4,
+        label: ''
+      }, {
+        value: 5,
+        label: ''
       }]
     }
   },
