@@ -19,6 +19,7 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
       Resource: "*"
 
 functions:
@@ -103,7 +104,15 @@ functions:
           path: admin/quest/update
           method: post
           cors: true
-
+  deleteQuest:
+    memorySize: 128
+    handler: admin.deleteQuest
+    events:
+      - http:
+          path: admin/quest/delete
+          method: post
+          cors: true
+ 
 resources:
   Resources:
     UserDynamoDbTable:

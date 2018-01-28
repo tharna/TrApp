@@ -24,7 +24,7 @@
         </el-tabs>
   </div>
     <div v-else-if="!authenticated" style="text-align:center; padding-top: 50px;">
-      <img src="https://aikojentanssi.fi/liikuntalarp_logo2.png"></img>
+      <img src="/liikuntalarp_logo2.png"></img>
       <h3>Aikojen Tanssi - TreeniApp</h3>
           <el-button
             @click="auth.login()"

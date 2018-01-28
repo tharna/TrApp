@@ -135,7 +135,7 @@ module.exports.getActivity = (event, context, callback) => {
   setUserInfo(event) 
 
   var date = new Date();
-  date.setDate(date.getDate() - 7);
+  date.setDate(date.getDate() - 6);
   var dateString = date.toISOString().substr(0, 10);
   console.log(dateString)
   checkActivity();
@@ -165,7 +165,7 @@ module.exports.getActivity = (event, context, callback) => {
           console.log("ActivityData:", data.Items)
           var activity = new Array()
           var result;
-          for(var i=7;i>0;i--) {
+          for(var i=6;i>=0;i--) {
             date = new Date()
             date.setDate(date.getDate() - i)
             dateString = date.toISOString().substr(0, 10)

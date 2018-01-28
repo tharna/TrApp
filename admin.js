@@ -84,30 +84,37 @@ module.exports.updateQuest = (event, context, callback) => {
     return;
   }
   const requestBody = JSON.parse(event.body);
-  const exercisename = requestBody.exercisename;
-  const exercisetype = requestBody.exercisetype;
-  const amount = requestBody.amount;
-  const note = requestBody.note;
 
-  if (typeof exercisename !== 'string' || typeof exercisetype !== 'string' || typeof amount !== 'number') {
-    console.error('Validation Failed');
-    callback(new Error('Couldn\'t submit exercise data because of validation errors.'));
-    return;
-  }
-
-  checkUser();
-  checkActivity();
-
-  submitExercise(exerciseData(exercisename, exercisetype, amount, note))
+  submitQuest(questData(requestBody))
     .then(res => {
+      if( requestBody.questGroup != requestBody.questGroupOld)
+        var params = {
+          TableName: process.env.QUEST_TABLE,
+          Key:{
+            "questID": requestBody.questID,
+            "groupID": requestBody.questGroupOld
+          }
+        };
+      dynamoDb.delete(params).promise()
+        .then(res => {
+        })
+        .catch(err => {
+          console.log(err);
+          callback(null, {
+            statusCode: 500,
+            body: JSON.stringify({
+              message: `Unable to update quest`
+            })
+          })
+        });
+
       callback(null, {
         statusCode: 200,
         headers: {
           "Access-Control-Allow-Origin": "*"
         },
         body: JSON.stringify({
-          message: 'Sucessfully submitted exercise data',
-          candidateId: res.id
+          message: 'Sucessfully updated quest.',
         })
       });
     })
@@ -116,12 +123,48 @@ module.exports.updateQuest = (event, context, callback) => {
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to submit exercise data`
+          message: `Unable to update quest`
         })
       })
     });
 
 };
+module.exports.deleteQuest = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed');
+    callback(new Error('You are unauthorized to perform this action.'));
+    return;
+  }
+  const requestBody = JSON.parse(event.body);
+  var params = {
+    TableName: process.env.QUEST_TABLE,
+    Key:{
+        "questID":requestBody.questID,
+        "groupID":requestBody.questGroup
+    }
+  };
+  dynamoDb.delete(params).promise()
+    .then(res => {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully deleted quest.',
+        })
+      });
+    }).catch(err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to delete quest`
+        })
+      })
+    });
+};
+
 
 const submitQuest = quest => {
   console.log('Submitting quest');
@@ -144,7 +187,7 @@ const questData = (requestBody) => {
 
 
   return {
-    questID: uuid.v1(),
+    questID: (requestBody.questID)? requestBody.questID : uuid.v1(),
     groupID: requestBody.questGroup.toString(),
     name: requestBody.questName,
     type: requestBody.questType,
@@ -154,7 +197,11 @@ const questData = (requestBody) => {
     questFailure: requestBody.questFailure,
     questMeasure: requestBody.questMeasure,
     questActive: requestBody.questActive,
-    questPublish: requestBody.questPublish
+    questPublish: requestBody.questPublish,
+    questStory: requestBody.questStory, 
+    questDays: requestBody.questDays,
+    questScope: requestBody.questScope,
+    questRepeat: requestBody.questRepeat
   };
     //questActive: requestBody.questActive.substr(0, 10),
     //questPublish: requestBody.questPublish.substr(0, 10)
