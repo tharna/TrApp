@@ -18,7 +18,9 @@
         </p>
       </div>
     </div>
-    <div style="text-align:center;"><el-button type="primary" round @click.prevent="postExerciseData">Lähetä</el-button></div>
+    Muistiinpanot
+    <el-input v-model="note" placeholder="Muistiinpanot" type="textarea"></el-input>
+    <div style="text-align:center;"><el-button type="primary" :loading="loading" round @click.prevent="postExerciseData">Lähetä</el-button></div>
   </form>
 </template>
 <script>
@@ -30,7 +32,9 @@ export default {
     return {
       category: 0,
       amount: '',
-      subcategory: 0
+      note: ' ',
+      subcategory: 0,
+      loading: false
     }
   },
   methods: {
@@ -38,10 +42,12 @@ export default {
       this.$emit('input', { amount: this.amount, laji: this.category, type: this.subcategory })
     },
     postExerciseData: function () {
+      this.loading = true
       axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data', {
         exercisename: this.categories.find(category => { return category.id === this.category }).name,
         exercisetype: this.subcategories.find(category => { return category.id === this.subcategory }).name,
-        amount: parseInt(this.amount)
+        amount: parseInt(this.amount),
+        note: this.note
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())
         this.$notify({
@@ -50,6 +56,14 @@ export default {
           type: 'success'
         })
         this.$emit('update')
+      }).catch(err => {
+        console.log(err)
+        this.loading = false
+        this.$notify({
+          title: 'Virhe',
+          message: 'Treenin lisääminen ei onnistunut',
+          type: 'error'
+        })
       })
     }
   },

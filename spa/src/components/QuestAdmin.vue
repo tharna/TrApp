@@ -69,10 +69,10 @@
           <el-col :xs=24 :sm=12>
             <el-radio v-model="questType" label="1">Suoritus</el-radio>
             <el-radio v-model="questType" label="2">Määrä</el-radio>
-            <el-container v-show="questType == 2">
+            <el-container>
               Vaadittu suoritus:<br/>
             <el-input-number  v-model="amount" :min="1" :step="1"></el-input-number>
-            <el-input v-model="questMeasure" placeholder="Yksikkö"></el-input>
+            <el-input v-show="questType == 2" v-model="questMeasure" placeholder="Yksikkö"></el-input>
             </el-container>
  
  

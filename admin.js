@@ -18,7 +18,6 @@ module.exports.listQuests = (event, context, callback) => {
     callback(new Error('You are unauthorized to perform this action.'));
     return;
   }
-  console.log('Do we ever get here?')
   var params = {
     TableName: process.env.QUEST_TABLE,
     ScanIndexForward: false
@@ -192,16 +191,19 @@ const questData = (requestBody) => {
     name: requestBody.questName,
     type: requestBody.questType,
     amount: requestBody.amount,
-    questDesc: requestBody.questDesc,
-    questSuccess: requestBody.questSuccess,
-    questFailure: requestBody.questFailure,
+    questDesc: (requestBody.questDesc == '')? ' ' : requestBody.questDesc,
+    questSuccess: (requestBody.questSuccess == '')? ' ' : requestBody.questSuccess,
+    questFailure: (requestBody.questFailure == '')? ' ' : requestBody.questFailure,
     questMeasure: requestBody.questMeasure,
     questActive: requestBody.questActive,
     questPublish: requestBody.questPublish,
-    questStory: requestBody.questStory, 
+    questStory: (requestBody.questStory == '')? ' ' : requestBody.questStory,
     questDays: requestBody.questDays,
     questScope: requestBody.questScope,
-    questRepeat: requestBody.questRepeat
+    questRepeat: requestBody.questRepeat,
+    activity: [{
+      total: 0
+    }]
   };
     //questActive: requestBody.questActive.substr(0, 10),
     //questPublish: requestBody.questPublish.substr(0, 10)

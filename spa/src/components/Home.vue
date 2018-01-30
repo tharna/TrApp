@@ -7,7 +7,10 @@
           <el-tab-pane label="Treenit" name="second">
             <exercises></exercises>
           </el-tab-pane>
-          <el-tab-pane label="Saavutukset" name="third">
+          <el-tab-pane label="Viikkotehtävät" name="third">
+            <quests></quests>
+          </el-tab-pane>
+          <el-tab-pane label="Saavutukset" name="fourth">
             <achievements></achievements>
           </el-tab-pane>
           <el-tab-pane label="Kirjaudu ulos" name="logout">
@@ -39,6 +42,8 @@
 import Activity from './Activity.vue'
 import Exercises from './Exercises.vue'
 import Achievements from './Achievements.vue'
+import Quests from './Quests.vue'
+
 export default {
   name: 'home',
   props: ['auth', 'authenticated'],
@@ -51,11 +56,11 @@ export default {
   components: {
     Activity,
     Exercises,
-    Achievements
+    Achievements,
+    Quests
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))
-    console.log(user)
     this.admin = this.authenticated && (user['https://app.aikojentanssi.fi/group'] === 99)
   }
 

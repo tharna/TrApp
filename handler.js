@@ -266,6 +266,122 @@ module.exports.getUser = (event, context, callback) => {
 
 };
 
+module.exports.getQuests = (event, context, callback) => {
+  setUserInfo(event) 
+  var date = new Date().toISOString();
+
+  var params = {
+    TableName: process.env.QUEST_TABLE,
+    ScanIndexForward: false,
+    ProjectionExpression: "questID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type",
+    ExpressionAttributeNames: {
+      "#name": "name",
+      "#type": "type"
+    },
+    FilterExpression: "groupID = :group",
+    ExpressionAttributeValues: {
+      ":group": userInfo["https://app.aikojentanssi.fi/group"].toString(),
+    }
+  };
+
+  console.log("Scanning quest table.");
+  const onScan = (err, data) => {
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
+      callback(err);
+    } else {
+      console.log("Scan succeeded.");
+      var quests = new Array()
+      data.Items.forEach((quest, index) => {
+        if( quest.questPublish <= date) {
+          var untilDate = new Date( );
+          untilDate.setDate(untilDate.getDate(quest.questActive) + 6)
+
+          if( quest.questActive <= date && date <= untilDate.toISOString()) {
+            quest.isActive = true;
+          }
+          quests.push(quest);
+        }
+      });
+      return callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          quests: quests
+        })
+      });
+    }
+  };
+  dynamoDb.scan(params, onScan);
+};
+
+module.exports.postQuest = (event, context, callback) => {
+  setUserInfo(event) 
+  const requestBody = JSON.parse(event.body);
+  submitQuest(questData(requestBody))
+    .then(res => {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully submitted quest activity',
+          candidateId: res.id
+        })
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to submit quest activity`
+        })
+      })
+    });
+};
+
+const submitQuest = quest => {
+  console.log('Submitting quest');
+  const questInfo = {
+    TableName: process.env.QUEST_TABLE,
+    Key: {
+      questID: quest.questID,
+      groupID: quest.groupID
+    },
+    UpdateExpression: "SET activity.#total = activity.#total + :val",
+    ExpressionAttributeNames: {
+      "#total": "total"
+    },
+    ExpressionAttributeValues: {
+      ":val": 1
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+  return dynamoDb.update(questInfo).promise()
+    .then(res => quest);
+};
+
+const questData = (requestBody) => {
+  //if (typeof questname !== 'string' || typeof questtype !== 'string' || typeof amount !== 'number') {
+    //console.error('Validation Failed');
+    //return new Error('Couldn\'t submit quest data because of validation errors.');
+  //}
+
+  const date = new Date().toISOString();
+
+  return {
+    questID: requestBody.questID,
+    groupID: userInfo["https://app.aikojentanssi.fi/group"].toString(),
+    date: date,
+    user: user,
+    activity: requestBody.questActivity,
+  };
+};
+
 
 const submitExercise = exercise => {
   console.log('Submitting exercise');
@@ -299,6 +415,9 @@ const exerciseData = (exercisename, exercisetype, amount, note) => {
 
   const timestamp = new Date().getTime();
   const date = new Date().toISOString();
+  if ( note == '') {
+    note = ' ';
+  }
   return {
     userID: user,
     date: date,

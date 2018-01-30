@@ -71,6 +71,14 @@ functions:
           path: data/quest
           method: get
           cors: true
+  postQuest:
+    memorySize: 128
+    handler: handler.postQuest
+    events:
+      - http:
+          path: data/quest
+          method: post
+          cors: true
   getAchievements:
     memorySize: 128
     handler: handler.getAchievements
