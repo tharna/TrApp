@@ -16,10 +16,10 @@
         <div class="columns medium-3" v-for="quest in quests">
           <div class="card" v-show="questFilter == quest.groupID || questFilter == 'Kaikki'">
             <div class="card-divider">
-              {{ quest.name }} | {{ quest.groupID }}
+              {{ quest.name }} | {{ quest.groupID }}
             </div>
             <div class="card-section">
-              <p>{{ quest.questActive }}</p>
+              <p>{{ quest.questActive | date }}</p>
               <el-button type="primary" round @click="editQuest(quest.questID)">Muokkaa</el-button> 
               <el-button type="primary" round @click="showQuest(quest.questID)">Suoritukset</el-button> 
             </div>
@@ -193,6 +193,7 @@
 <script>
 import Vue from 'vue'
 import axios from 'axios'
+import moment from 'moment'
 Vue.use(axios)
 export default {
   data () {
@@ -204,19 +205,19 @@ export default {
       addQuestVisible: false,
       editQuestVisible: false,
       questFilter: 'Kaikki',
-      questName: ' ',
-      questType: ' ',
-      questDesc: ' ',
+      questName: '',
+      questType: '',
+      questDesc: '',
       questGroup: '',
-      questStory: ' ',
-      questSuccess: ' ',
-      questFailure: ' ',
+      questStory: '',
+      questSuccess: '',
+      questFailure: '',
       questDays: 0,
       amount: 0,
-      questMeasure: ' ',
-      questRepeat: ' ',
-      questActive: ' ',
-      questPublish: ' ',
+      questMeasure: '',
+      questRepeat: '',
+      questActive: '',
+      questPublish: '',
       datePickerOpts: {
         firstDayOfWeek: 1
       },
@@ -254,6 +255,9 @@ export default {
       }, {
         value: 'UH2',
         label: 'UH2'
+      }, {
+        value: 'Yhteinen',
+        label: 'Yhteinen'
       }],
       groups: [{
         value: 'Kekäle',
@@ -285,6 +289,9 @@ export default {
       }, {
         value: 'UH2',
         label: 'UH2'
+      }, {
+        value: 'Yhteinen',
+        label: 'Yhteinen'
       }],
       EquestName: ' ',
       EquestType: ' ',
@@ -385,7 +392,6 @@ export default {
       })
     },
     editQuest: function (questID) {
-      console.log(questID)
       var quest = this.quests.find(quest => { return quest.questID === questID })
       this.EquestName = quest.name
       this.EquestType = quest.type
@@ -432,6 +438,11 @@ export default {
     },
     showQuest: function (questID, event) {
       this.loading = true
+    }
+  },
+  filters: {
+    date: function (value) {
+      return moment(String(value)).format('DD.MM.YYYY HH:mm')
     }
   },
   created () {

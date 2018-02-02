@@ -278,9 +278,10 @@ module.exports.getQuests = (event, context, callback) => {
       "#name": "name",
       "#type": "type"
     },
-    FilterExpression: "groupID = :group",
+    FilterExpression: "groupID = :group OR groupID = :all",
     ExpressionAttributeValues: {
       ":group": userInfo["https://app.aikojentanssi.fi/group"].toString(),
+      ":all": "Yhteinen",
     }
   };
 
@@ -302,6 +303,8 @@ module.exports.getQuests = (event, context, callback) => {
           }
           quests.push(quest);
         }
+        // TODO: check success / failure
+        // TODO: calculate progress
       });
       return callback(null, {
         statusCode: 200,
@@ -346,21 +349,21 @@ module.exports.postQuest = (event, context, callback) => {
 
 const submitQuest = quest => {
   console.log('Submitting quest');
+  const date = new Date().toISOString();
   const questInfo = {
     TableName: process.env.QUEST_TABLE,
     Key: {
       questID: quest.questID,
       groupID: quest.groupID
     },
-    UpdateExpression: "SET activity.#total = activity.#total + :val",
-    ExpressionAttributeNames: {
-      "#total": "total"
-    },
+    UpdateExpression: "SET activity = list_append(activity, :activity)",
     ExpressionAttributeValues: {
-      ":val": 1
+      ":activity": [{'user': user, amount: quest.activity, date: date }]
     },
     ReturnValues: "UPDATED_NEW"
   };
+  // TODO: add individual activity record
+
   return dynamoDb.update(questInfo).promise()
     .then(res => quest);
 };

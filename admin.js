@@ -84,9 +84,10 @@ module.exports.updateQuest = (event, context, callback) => {
   }
   const requestBody = JSON.parse(event.body);
 
-  submitQuest(questData(requestBody))
+  saveQuest(questData(requestBody))
     .then(res => {
-      if( requestBody.questGroup != requestBody.questGroupOld)
+      if( requestBody.questGroup != requestBody.questGroupOld) {
+
         var params = {
           TableName: process.env.QUEST_TABLE,
           Key:{
@@ -94,18 +95,19 @@ module.exports.updateQuest = (event, context, callback) => {
             "groupID": requestBody.questGroupOld
           }
         };
-      dynamoDb.delete(params).promise()
-        .then(res => {
-        })
-        .catch(err => {
-          console.log(err);
-          callback(null, {
-            statusCode: 500,
-            body: JSON.stringify({
-              message: `Unable to update quest`
-            })
+        dynamoDb.delete(params).promise()
+          .then(res => {
           })
-        });
+          .catch(err => {
+            console.log(err);
+            callback(null, {
+              statusCode: 500,
+              body: JSON.stringify({
+                message: `Unable to update quest`
+              })
+            })
+          });
+      }
 
       callback(null, {
         statusCode: 200,
@@ -175,6 +177,41 @@ const submitQuest = quest => {
     .then(res => quest);
 };
 
+const saveQuest = quest => {
+  console.log('Updating quest');
+
+  const activity = {
+    TableName: process.env.QUEST_TABLE,
+    Key: {
+      questID: quest.questID,
+      groupID: quest.groupID
+    },
+    ProjectionExpression: "activity"
+  }
+
+  return dynamoDb.get(activity).promise()
+    .then(res => {
+      console.log( res)
+      quest.activity = res.Item.activity
+
+      const questInfo = {
+        TableName: process.env.QUEST_TABLE,
+        Item: quest,
+      };
+      dynamoDb.put(questInfo).promise()
+        .then(res => quest);
+    }).catch( err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to quest activity`
+        })
+      })
+  })
+};
+
+
 const questData = (requestBody) => {
 
   console.log(requestBody);        
@@ -194,16 +231,14 @@ const questData = (requestBody) => {
     questDesc: (requestBody.questDesc == '')? ' ' : requestBody.questDesc,
     questSuccess: (requestBody.questSuccess == '')? ' ' : requestBody.questSuccess,
     questFailure: (requestBody.questFailure == '')? ' ' : requestBody.questFailure,
-    questMeasure: requestBody.questMeasure,
+    questMeasure: (requestBody.questMeasure == '')? ' ': requestBody.questMeasure,
     questActive: requestBody.questActive,
     questPublish: requestBody.questPublish,
     questStory: (requestBody.questStory == '')? ' ' : requestBody.questStory,
     questDays: requestBody.questDays,
     questScope: requestBody.questScope,
     questRepeat: requestBody.questRepeat,
-    activity: [{
-      total: 0
-    }]
+    activity: [{}]
   };
     //questActive: requestBody.questActive.substr(0, 10),
     //questPublish: requestBody.questPublish.substr(0, 10)

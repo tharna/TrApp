@@ -1,19 +1,19 @@
 <template>
   <div v-if="authenticated">
            <el-tabs v-model="activeName">
-          <el-tab-pane label="Edistyminen" name="first">
+          <el-tab-pane label="Aktiivisuus" name="first">
               <activity></activity>
           </el-tab-pane>
           <el-tab-pane label="Treenit" name="second">
             <exercises></exercises>
           </el-tab-pane>
-          <el-tab-pane label="Viikkotehtävät" name="third">
+          <el-tab-pane label="Tehtävät" name="third">
             <quests></quests>
           </el-tab-pane>
-          <el-tab-pane label="Saavutukset" name="fourth">
+          <el-tab-pane label="Urotyöt" name="fourth">
             <achievements></achievements>
           </el-tab-pane>
-          <el-tab-pane label="Kirjaudu ulos" name="logout">
+          <el-tab-pane label="Tili" name="logout">
 
           <el-button
             v-if="authenticated"

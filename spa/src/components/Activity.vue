@@ -12,38 +12,6 @@
         </trend>
       </el-col>
     </el-row>
-    <el-row :gutter="10">
-      <el-col :xs="24" :sm="24" :lg="12">
-        Heimon viikkotavoite:
-        <el-progress :percentage="20" :stroke-width="16" @click.native="heimoDialogVisible = true"></el-progress>
-        <el-dialog
-          title="Heimon viikkotavoite"
-          :visible.sync="heimoDialogVisible"
-          width="80%">
-          <span>Juoskaa yhteensä 100 km</span><br>
-          Suoritus: <input type="text">
-          <span slot="footer" class="dialog-footer">
-            <el-button @click.native="heimoDialogVisible = false" round>Peruuta</el-button>
-            <el-button type="primary" @click.native="heimoDialogVisible = false" round>Lähetä</el-button>
-          </span>
-        </el-dialog>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="12">
-        Henkilökohtainen viikkotavoite:
-        <el-progress :percentage="100" :stroke-width="16" status="success" @click.native="omaDialogVisible = true"></el-progress>
-        <el-dialog
-                                                          title="Henkilökohtainen viikkotavoite"
-                                                          :visible.sync="omaDialogVisible"
-                                                          width="80%">
-          <span>Venyttele joka päivä.</span><br>
-          <span slot="footer" class="dialog-footer">
-            Suoritettu: 
-            <el-button @click.native="omaDialogVisible = false" round>Ei</el-button>
-            <el-button type="primary" @click.native="omaDialogVisible = false" round>Kyllä</el-button>
-          </span>
-        </el-dialog>
-      </el-col>
-    </el-row>
 
     <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :lg="12">
@@ -93,8 +61,6 @@ export default {
   data () {
     return {
       treeni: {laji: 0, amount: '', type: 0},
-      heimoDialogVisible: false,
-      omaDialogVisible: false,
       addExerciseVisible: false,
       actions: [
         { name: 'Kyllä' },
