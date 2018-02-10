@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     getExercises: function () {
-      axios.get('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data')
+      axios.get('/data')
         .then(response => { this.exercises = response.data.exercises })
     }
   },

@@ -250,11 +250,11 @@ export default {
         value: 'Karhut',
         label: 'Karhut'
       }, {
-        value: 'UH1',
-        label: 'UH1'
+        value: 'Iku',
+        label: 'Iku'
       }, {
-        value: 'UH2',
-        label: 'UH2'
+        value: 'Mekanistit',
+        label: 'Mekanistit'
       }, {
         value: 'Yhteinen',
         label: 'Yhteinen'
@@ -284,11 +284,11 @@ export default {
         value: 'Karhut',
         label: 'Karhut'
       }, {
-        value: 'UH1',
-        label: 'UH1'
+        value: 'Iku',
+        label: 'Iku'
       }, {
-        value: 'UH2',
-        label: 'UH2'
+        value: 'Mekanistit',
+        label: 'Mekanistit'
       }, {
         value: 'Yhteinen',
         label: 'Yhteinen'
@@ -312,12 +312,12 @@ export default {
   },
   methods: {
     getQuests: function () {
-      axios.get('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/admin/quest')
+      axios.get('/admin/quest')
         .then(response => { this.quests = response.data.quests })
     },
     postAddQuest: function () {
       this.loadingSend = true
-      axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/admin/quest/add', {
+      axios.post('/admin/quest/add', {
         questName: this.questName,
         questType: this.questType,
         questGroup: this.questGroup,
@@ -354,7 +354,7 @@ export default {
     },
     postEditQuest: function () {
       this.loadingSend = true
-      axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/admin/quest/update', {
+      axios.post('/admin/quest/update', {
         questID: this.EquestID,
         questName: this.EquestName,
         questType: this.EquestType,
@@ -413,7 +413,7 @@ export default {
     },
     postDelQuest: function () {
       this.loadingDel = true
-      axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/admin/quest/delete', {
+      axios.post('/admin/quest/delete', {
         questID: this.EquestID,
         questGroup: this.EquestGroup
       }).then(reponse => {

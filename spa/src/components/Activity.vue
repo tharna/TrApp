@@ -80,6 +80,7 @@ export default {
         { id: '4', category_id: '1', name: 'Megazone', selected: false },
         { id: '5', category_id: '1', name: 'Ammunta', selected: false },
         { id: '6', category_id: '1', name: 'Boffaus', selected: false },
+        { id: '100', category_id: '1', name: 'Muu lihaskunto', selected: false },
         { id: '7', category_id: '2', name: 'Pyöräily', selected: true },
         { id: '8', category_id: '2', name: 'Uinti', selected: false },
         { id: '9', category_id: '2', name: 'Juoksu', selected: false },
@@ -88,12 +89,14 @@ export default {
         { id: '12', category_id: '2', name: 'Cardio', selected: false },
         { id: '13', category_id: '2', name: 'HIIT', selected: false },
         { id: '14', category_id: '2', name: 'Luistelu', selected: false },
+        { id: '101', category_id: '2', name: 'Muu kestävyys', selected: false },
         { id: '15', category_id: '3', name: 'Tanssilajit', selected: true },
         { id: '16', category_id: '3', name: 'Pallolajit', selected: false },
         { id: '17', category_id: '3', name: 'Parkour', selected: false },
         { id: '18', category_id: '3', name: 'Boulderointi', selected: false },
         { id: '19', category_id: '3', name: 'Mailalajit', selected: false },
         { id: '20', category_id: '3', name: 'Yökerhotanssi', selected: false },
+        { id: '102', category_id: '3', name: 'Muu ketteryys', selected: false },
         { id: '21', category_id: '4', name: 'Venyttely', selected: true },
         { id: '22', category_id: '4', name: 'Jooga', selected: false },
         { id: '23', category_id: '4', name: 'Vesijuoksu', selected: false },
@@ -102,7 +105,8 @@ export default {
         { id: '26', category_id: '4', name: 'Snorklaus', selected: false },
         { id: '27', category_id: '4', name: 'Fysioterapia', selected: false },
         { id: '28', category_id: '4', name: 'hyötyliikunta', selected: false },
-        { id: '29', category_id: '4', name: 'rauhalliset lajit', selected: false }
+        { id: '29', category_id: '4', name: 'rauhalliset lajit', selected: false },
+        { id: '103', category_id: '4', name: 'Muu lihaskunto', selected: false }
       ],
       activity: [],
       user: []
@@ -115,13 +119,13 @@ export default {
   },
   methods: {
     getActivity: function () {
-      axios.get('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data/activity')
+      axios.get('/data/activity')
         .then(response => {
           this.activity = response.data.activity // .activity.map((amount) => { return amount.total })
         })
     },
     getUserData: function () {
-      axios.get('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data/user')
+      axios.get('/data/user')
         .then(response => { this.user = response.data.user })
     },
     updateData: function () {

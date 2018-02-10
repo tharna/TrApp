@@ -37,5 +37,28 @@ export default {
   }
 }
 </script>
+<style>
+body {
+  background: #f8fbf4;
+}
+.el-tabs__nav-scroll {
+  background: #8bc34a;
+  color: #fff;
+}
+.el-tabs__item {
+  color: #fff;
+}
+.el-tabs__item:hover {
+  color: #466522;
+  background: #e8f3db;
+}
+.el-tabs__item.is-active {
+  color: #466522;
+  background: #e8f3db;
+}
+.el-tabs__active-bar {
+  background: transparent;
+}
+</style>
 
 

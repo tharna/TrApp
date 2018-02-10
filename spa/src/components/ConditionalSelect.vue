@@ -13,6 +13,7 @@
           <select v-model="subcategory" name="subcategory" @change="sync">
             <option v-for="subcategory in conditionalSubcategories" :value="subcategory.id" :selected="subcategory.selected == true">{{ subcategory.name }}</option>
           </select>
+        <el-input v-model="other" v-if="subcategory >= 100" placeholder="Laji"></el-input>
         </div>
         <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number>
         </p>
@@ -34,7 +35,8 @@ export default {
       amount: '',
       note: ' ',
       subcategory: 0,
-      loading: false
+      loading: false,
+      other: ''
     }
   },
   methods: {
@@ -43,9 +45,10 @@ export default {
     },
     postExerciseData: function () {
       this.loading = true
-      axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data', {
+      var type = (this.subcategory >= 100) ? this.other : this.subcategories.find(category => { return category.id === this.subcategory }).name
+      axios.post('/data', {
         exercisename: this.categories.find(category => { return category.id === this.category }).name,
-        exercisetype: this.subcategories.find(category => { return category.id === this.subcategory }).name,
+        exercisetype: type,
         amount: parseInt(this.amount),
         note: this.note
       }).then(reponse => {

@@ -71,13 +71,14 @@ export default {
   },
   methods: {
     getQuests: function () {
-      axios.get('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data/quest')
+      axios.get('/data/quest')
         .then(response => { this.quests = response.data.quests })
     },
     postQuest: function (questID) {
       this.loading = true
-      axios.post('https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev/data/quest', {
+      axios.post('/data/quest', {
         questID: questID,
+        groupID: this.currentQuest.groupID,
         questActivity: this.questActivity
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())

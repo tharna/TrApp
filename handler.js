@@ -273,7 +273,7 @@ module.exports.getQuests = (event, context, callback) => {
   var params = {
     TableName: process.env.QUEST_TABLE,
     ScanIndexForward: false,
-    ProjectionExpression: "questID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type",
+    ProjectionExpression: "questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity",
     ExpressionAttributeNames: {
       "#name": "name",
       "#type": "type"
@@ -295,16 +295,54 @@ module.exports.getQuests = (event, context, callback) => {
       var quests = new Array()
       data.Items.forEach((quest, index) => {
         if( quest.questPublish <= date) {
+          var questObj = {
+            questID: quest.questID,
+            groupID: quest.groupID,
+            type: quest.type,
+            name: quest.name,
+            questMeasure: quest.questMeasure,
+            questSuccess: '',
+            questFailure: '',
+            questDesc: quest.questDesc,
+            questStory: ''
+          }
           var untilDate = new Date( );
           untilDate.setDate(untilDate.getDate(quest.questActive) + 6)
 
-          if( quest.questActive <= date && date <= untilDate.toISOString()) {
-            quest.isActive = true;
+          if( quest.questActive <= date) {
+            questObj.questStory = quest.questStory
           }
-          quests.push(quest);
-        }
-        // TODO: check success / failure
-        // TODO: calculate progress
+          if( quest.questActive <= date && date <= untilDate.toISOString()) {
+            questObj.isActive = true;
+          }
+          var members = 1
+          var repeats = 1
+          if(quest.questScope == 1) {
+            members = memberCount(quest.groupID)
+          } 
+          
+          if(quest.questRepeat == 2) {
+            repeats = quest.questDays
+          }
+          var total = quest.amount * members * repeats
+          var progress = quest.activity.reduce(function (total, value) {
+            if (!isNaN(parseFloat(value.amount)) && isFinite(value.amount)) {
+              return total + parseInt(value.amount)
+            } else {
+              return total
+            }
+          }, 0)
+          questObj.progress = Math.round(progress / total * 100)
+          if ( questObj.progress >= 100) {
+            questObj.progress = 100
+            questObj.questSuccess = quest.questSuccess
+          } else if ( date >= untilDate.toISOString( )) {
+            questObj.questFailure = quest.questFailure
+          }
+          // TODO: Check personal status      
+          quests.push(questObj);
+        } 
+
       });
       return callback(null, {
         statusCode: 200,
@@ -358,14 +396,13 @@ const submitQuest = quest => {
     },
     UpdateExpression: "SET activity = list_append(activity, :activity)",
     ExpressionAttributeValues: {
-      ":activity": [{'user': user, amount: quest.activity, date: date }]
+      ":activity": [{user: user, amount: quest.activity, date: date }]
     },
     ReturnValues: "UPDATED_NEW"
   };
   // TODO: add individual activity record
 
-  return dynamoDb.update(questInfo).promise()
-    .then(res => quest);
+  return dynamoDb.update(questInfo).promise().then(res => quest);
 };
 
 const questData = (requestBody) => {
@@ -378,7 +415,7 @@ const questData = (requestBody) => {
 
   return {
     questID: requestBody.questID,
-    groupID: userInfo["https://app.aikojentanssi.fi/group"].toString(),
+    groupID: requestBody.groupID,
     date: date,
     user: user,
     activity: requestBody.questActivity,
@@ -397,8 +434,6 @@ const submitExercise = exercise => {
 };
 
 const exerciseData = (exercisename, exercisetype, amount, note) => {
-  // TODO get userInfo
-  // TODO check achievements
   
   updateActivity(amount)
     .then(res => {
@@ -408,6 +443,7 @@ const exerciseData = (exercisename, exercisetype, amount, note) => {
       console.log("Updating activity failed:", err);
     });
 
+/* TODO: Levels will be enabled on 1.3
   updateLevels(amount, exercisename)
     .then(res => {
       console.log("Levels updated.");
@@ -415,7 +451,7 @@ const exerciseData = (exercisename, exercisetype, amount, note) => {
     .catch(err => {
       console.log("Updating levels failed:", err);
     });
-
+*/
   const timestamp = new Date().getTime();
   const date = new Date().toISOString();
   if ( note == '') {
@@ -499,7 +535,6 @@ const checkUser = () => {
       if (err) {
         console.log("Error getting user.");
       } else {
-        console.log("Userdata:", data);
         if (!data.Item) {
           addUser()
           .then(res => {
@@ -605,4 +640,43 @@ mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
 
   userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] });
   user = userInfo.email;
+}
+
+const memberCount = (groupID) => {
+  const groups = [{
+      value: 'Kekäle',
+      members: 5 
+    }, {
+      value: 'Kvantti',
+      members: 3
+    }, {
+      value: 'Loharit',
+      members: 9
+    }, {
+      value: 'Lopparit',
+      members: 9
+    }, {
+      value: 'Manse',
+      members: 7
+    }, {
+      value: 'Pöllöt',
+      members: 4 
+    }, {
+      value: 'Tammi',
+      members: 6
+    }, {
+      value: 'Karhut',
+      members: 5
+    }, {
+      value: 'Iku',
+      members: 5
+    }, {
+      value: 'Mekanistit',
+      members: 8
+    }, {
+      value: 'Yhteinen',
+      members: 61
+    }
+  ] 
+  return groups.find(group => { return group.value === groupID }).members 
 }
