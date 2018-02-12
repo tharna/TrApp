@@ -45,7 +45,7 @@ export default {
     },
     postExerciseData: function () {
       this.loading = true
-      var type = (this.subcategory >= 100) ? this.other : this.subcategories.find(category => { return category.id === this.subcategory }).name
+      var type = (this.subcategory >= 100 && this.other !== '') ? this.other : this.subcategories.find(category => { return category.id === this.subcategory }).name
       axios.post('/data', {
         exercisename: this.categories.find(category => { return category.id === this.category }).name,
         exercisetype: type,

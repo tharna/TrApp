@@ -4,7 +4,10 @@
           <el-tab-pane label="Viikkotehtävät" name="first">
               <Quests></Quests>
           </el-tab-pane>
-          <el-tab-pane label="Kirjaudu ulos" name="logout">
+          <el-tab-pane label="Urotyöt" name="second">
+              <Achievements></Achievements>
+          </el-tab-pane>
+          <el-tab-pane label="Tili" name="logout">
 
           <el-button
             v-if="authenticated"
@@ -22,6 +25,7 @@
 
 <script>
 import Quests from './QuestAdmin.vue'
+import Achievements from './AchievementAdmin.vue'
 import router from '../router'
 export default {
   name: 'home',
@@ -33,7 +37,8 @@ export default {
     }
   },
   components: {
-    Quests
+    Quests,
+    Achievements
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))

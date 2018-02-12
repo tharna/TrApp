@@ -9,7 +9,7 @@ provider:
     USER_TABLE: "userdata-${opt:stage, self:provider.stage}"
     EXERCISE_TABLE: "exercisedata-${opt:stage, self:provider.stage}"
     ACTIVITY_TABLE: "activitydata-${opt:stage, self:provider.stage}"
-    ACHIEVEMENT_TABLE: "achievement-${opt:stage, self:provider.stage}"
+    ACHIEVEMENT_TABLE: "achievements-${opt:stage, self:provider.stage}"
     QUEST_TABLE: "quest-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
@@ -87,6 +87,15 @@ functions:
           path: data/achievement
           method: get
           cors: true
+  postAchievement:
+    memorySize: 128
+    handler: handler.postAchievement
+    events:
+      - http:
+          path: data/achievement
+          method: post
+          cors: true
+
   ## ADMIN
   listQuests:
     memorySize: 128
@@ -118,6 +127,38 @@ functions:
     events:
       - http:
           path: admin/quest/delete
+          method: post
+          cors: true
+  listAchievements:
+    memorySize: 128
+    handler: admin.listAchievements
+    events:
+      - http:
+          path: admin/achievement
+          method: get
+          cors: true
+  addAchievement:
+    memorySize: 128
+    handler: admin.addAchievement
+    events:
+      - http:
+          path: admin/achievement/add
+          method: post
+          cors: true
+  updateAchievement:
+    memorySize: 128
+    handler: admin.updateAchievement
+    events:
+      - http:
+          path: admin/achievement/update
+          method: post
+          cors: true
+  deleteAchievement:
+    memorySize: 128
+    handler: admin.deleteAchievement
+    events:
+      - http:
+          path: admin/achievement/delete
           method: post
           cors: true
  
@@ -195,18 +236,12 @@ resources:
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: "userID"
-            AttributeType: "S"
-          -
             AttributeName: "achievementID"
             AttributeType: "S"
         KeySchema:
           -
-            AttributeName: "userID"
-            KeyType: "HASH"
-          -
             AttributeName: "achievementID"
-            KeyType: "RANGE"
+            KeyType: "HASH"
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

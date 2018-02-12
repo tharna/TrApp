@@ -106,7 +106,7 @@ export default {
         { id: '27', category_id: '4', name: 'Fysioterapia', selected: false },
         { id: '28', category_id: '4', name: 'hyötyliikunta', selected: false },
         { id: '29', category_id: '4', name: 'rauhalliset lajit', selected: false },
-        { id: '103', category_id: '4', name: 'Muu lihaskunto', selected: false }
+        { id: '103', category_id: '4', name: 'Muu kehonhuolto', selected: false }
       ],
       activity: [],
       user: []

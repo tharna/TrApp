@@ -244,6 +244,197 @@ const questData = (requestBody) => {
     //questPublish: requestBody.questPublish.substr(0, 10)
 };
 
+
+// ACHIEVEMENTS
+
+module.exports.listAchievements = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed');
+    callback(new Error('You are unauthorized to perform this action.'));
+    return;
+  }
+  var params = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    ScanIndexForward: false
+  };
+
+  console.log("Scanning achievement table.");
+  const onScan = (err, data) => {
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
+      callback(err);
+    } else {
+      console.log("Scan succeeded.");
+      return callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          achievements: data.Items
+        })
+      });
+    }
+  };
+  dynamoDb.scan(params, onScan);
+};
+
+module.exports.addAchievement = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed');
+    callback(new Error('You are unauthorized to perform this action.'));
+    return;
+  }
+  const requestBody = JSON.parse(event.body);
+
+  submitAchievement(achievementData(requestBody))
+    .then(res => {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully added new achievement.',
+        })
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to submit achievement`
+        })
+      })
+    });
+
+};
+
+module.exports.updateAchievement = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed');
+    callback(new Error('You are unauthorized to perform this action.'));
+    return;
+  }
+  const requestBody = JSON.parse(event.body);
+
+  saveAchievement(achievementData(requestBody))
+    .then(res => {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully updated achievement.',
+        })
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to update achievement`
+        })
+      })
+    });
+
+};
+
+module.exports.deleteAchievement = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed');
+    callback(new Error('You are unauthorized to perform this action.'));
+    return;
+  }
+  const requestBody = JSON.parse(event.body);
+  var params = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    Key:{
+        "achievementID":requestBody.achievementID,
+    }
+  };
+  dynamoDb.delete(params).promise()
+    .then(res => {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully deleted achievement.',
+        })
+      });
+    }).catch(err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to delete achievement`
+        })
+      })
+    });
+};
+
+const submitAchievement = achievement => {
+  console.log('Submitting achievement');
+  console.log(achievement)
+  const achievementInfo = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    Item: achievement,
+  };
+  return dynamoDb.put(achievementInfo).promise()
+    .then(res => achievement);
+};
+
+const saveAchievement = achievement => {
+  console.log('Updating achievement');
+
+  const achievementInfo = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    Item: quest,
+  };
+  return dynamoDb.put(achievementInfo).promise()
+    .then(res => achievement);
+};
+
+
+const achievementData = (requestBody) => {
+
+  console.log(requestBody);        
+ 
+  //if (typeof questname !== 'string' || typeof questtype !== 'string' || typeof amount !== 'number') {
+    //console.error('Validation Failed');
+    //return new Error('Couldn\'t submit quest data because of validation errors.');
+  //}
+
+
+  return {
+    achievementID: (requestBody.achievementID)? requestBody.achievementID : uuid.v1(),
+    name: requestBody.achievementName,
+    type: requestBody.achievementType,
+    achievementDesc: (requestBody.achievementDesc == '')? ' ' : requestBody.achievementDesc,
+    achievementMeasure: (requestBody.achievementMeasure == '')? ' ' : requestBody.achievementMeasure,
+    achievementLVL1: (requestBody.achievementLVL1 == '')? ' ' : requestBody.achievementLVL1,
+    achievementLVL2: (requestBody.achievementLVL2 == '')? ' ' : requestBody.achievementLVL2,
+    achievementLVL3: (requestBody.achievementLVL3 == '')? ' ' : requestBody.achievementLVL3,
+    achievementLVL4: (requestBody.achievementLVL4 == '')? ' ' : requestBody.achievementLVL4,
+    achievementLVL5: (requestBody.achievementLVL5 == '')? ' ' : requestBody.achievementLVL5,
+    achievementLVL1amount: (requestBody.achievementLVL1amount == '')? ' ' : requestBody.achievementLVL1amount,
+    achievementLVL2amount: (requestBody.achievementLVL2amount == '')? ' ' : requestBody.achievementLVL2amount,
+    achievementLVL3amount: (requestBody.achievementLVL3amount == '')? ' ' : requestBody.achievementLVL3amount,
+    achievementLVL4amount: (requestBody.achievementLVL4amount == '')? ' ' : requestBody.achievementLVL4amount,
+    achievementLVL5amount: (requestBody.achievementLVL5amount == '')? ' ' : requestBody.achievementLVL5amount,
+    achievementActive: requestBody.achievementActive,
+    achievementActiveEnd: requestBody.achievementActiveEnd,
+    achievementPublish: requestBody.achievementPublish
+  };
+};
+
+
+
 const setUserInfo = event => {
   const pubKey = `-----BEGIN CERTIFICATE-----
 MIIDCTCCAfGgAwIBAgIJSnIFajlclSxIMA0GCSqGSIb3DQEBCwUAMCIxIDAeBgNV
