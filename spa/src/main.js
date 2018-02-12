@@ -7,8 +7,7 @@ import AuthService from './auth/AuthService'
 import axios from 'axios'
 
 Vue.config.productionTip = false
-// axios.defaults.baseURL = 'https://drl2txv63f.execute-api.eu-west-1.amazonaws.com/prod'
-axios.defaults.baseURL = 'https://7u4yroqy10.execute-api.eu-west-1.amazonaws.com/dev'
+axios.defaults.baseURL = process.env.API_BASE_URL
 const auth = new AuthService()
 
 /* eslint-disable no-new */
