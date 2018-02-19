@@ -20,6 +20,8 @@ module.exports.submit = (event, context, callback) => {
   const exercisetype = requestBody.exercisetype;
   const amount = requestBody.amount;
   const note = requestBody.note;
+  const modifier = requestBody.modifier
+  const date = requestBody.date
 
   if (typeof exercisename !== 'string' || typeof exercisetype !== 'string' || typeof amount !== 'number') {
     console.error('Validation Failed');
@@ -30,7 +32,7 @@ module.exports.submit = (event, context, callback) => {
   checkUser();
   checkActivity();
 
-  submitExercise(exerciseData(exercisename, exercisetype, amount, note))
+  submitExercise(exerciseData(exercisename, exercisetype, amount, note, modifier, date))
     .then(res => {
       callback(null, {
         statusCode: 200,
@@ -58,7 +60,7 @@ module.exports.get = (event, context, callback) => {
   setUserInfo(event) 
     var params = {
         TableName: process.env.EXERCISE_TABLE,
-        ProjectionExpression: "exercisename, exercisetype, amount, note, #date",
+        ProjectionExpression: "exercisename, exercisetype, amount, note, #date, modifier",
         ExpressionAttributeNames: {
           "#date": "date",
         },
@@ -134,10 +136,21 @@ module.exports.getByType = (event, context, callback) => {
 module.exports.getActivity = (event, context, callback) => {
   setUserInfo(event) 
 
+  const period = event.queryStringParameters.period
   var date = new Date();
-  date.setDate(date.getDate() - 6);
+  var offset
+  switch (period) {
+    case 'Kuukausi':
+      offset = 29
+      break;
+    case 'Treenijakso':
+      offset = 89
+      break;
+    default:
+      offset = 6
+  }
+  date.setDate(date.getDate() - offset);
   var dateString = date.toISOString().substr(0, 10);
-  console.log(dateString)
   checkActivity();
   var params = {
       TableName: process.env.ACTIVITY_TABLE,
@@ -152,7 +165,6 @@ module.exports.getActivity = (event, context, callback) => {
         ":date": dateString
       }
   };
-  // TODO filter only 7 days
 
   console.log("Scanning exercise table.");
   const onScan = (err, data) => {
@@ -162,15 +174,13 @@ module.exports.getActivity = (event, context, callback) => {
           callback(err);
       } else {
           console.log("Scan succeeded.");
-          console.log("ActivityData:", data.Items)
           var activity = new Array()
           var result;
-          for(var i=6;i>=0;i--) {
+          for(var i=offset;i>=0;i--) {
             date = new Date()
             date.setDate(date.getDate() - i)
             dateString = date.toISOString().substr(0, 10)
             if(result = data.Items.find(item => { return item.date === dateString })) {
-              console.log(result)
               activity.push(result.total)
             } else {
               activity.push(0)
@@ -422,6 +432,125 @@ const questData = (requestBody) => {
   };
 };
 
+module.exports.getAchievements = (event, context, callback) => {
+  setUserInfo(event) 
+  var date = new Date().toISOString();
+
+  var params = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    ScanIndexForward: false,
+  };
+
+  console.log("Scanning achievement table.");
+  const onScan = (err, data) => {
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
+      callback(err);
+    } else {
+      console.log("Scan succeeded.");
+      var achievements = new Array()
+      data.Items.forEach((achievement, index) => {
+        if( achievement.achievementPublish <= date) {
+          var achievementObj = {
+            achievementID: achievement.achievementID,
+            achievementType: achievement.type,
+            name: achievement.name,
+            achievementMeasure: achievement.achievementMeasure,
+            achievementDesc: achievement.achievementDesc,
+          }
+
+          if( achievement.achievementActive <= date && date <= achievement.achievementActiveEnd) {
+            achievementObj.isActive = true;
+          }
+          achievementObj.level = 2
+          achievementObj.progress = 35
+          
+          // TODO: Check personal status      
+          // TODO: progress and level completion
+          achievements.push(achievementObj);
+
+        } 
+
+      });
+      return callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          achievements: achievements
+        })
+      });
+    }
+  };
+  dynamoDb.scan(params, onScan);
+};
+/*
+module.exports.postQuest = (event, context, callback) => {
+  setUserInfo(event) 
+  const requestBody = JSON.parse(event.body);
+  submitQuest(questData(requestBody))
+    .then(res => {
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully submitted quest activity',
+          candidateId: res.id
+        })
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Unable to submit quest activity`
+        })
+      })
+    });
+};
+
+const submitQuest = quest => {
+  console.log('Submitting quest');
+  const date = new Date().toISOString();
+  const questInfo = {
+    TableName: process.env.QUEST_TABLE,
+    Key: {
+      questID: quest.questID,
+      groupID: quest.groupID
+    },
+    UpdateExpression: "SET activity = list_append(activity, :activity)",
+    ExpressionAttributeValues: {
+      ":activity": [{user: user, amount: quest.activity, date: date }]
+    },
+    ReturnValues: "UPDATED_NEW"
+  };
+  // TODO: add individual activity record
+
+  return dynamoDb.update(questInfo).promise().then(res => quest);
+};
+
+const questData = (requestBody) => {
+  //if (typeof questname !== 'string' || typeof questtype !== 'string' || typeof amount !== 'number') {
+    //console.error('Validation Failed');
+    //return new Error('Couldn\'t submit quest data because of validation errors.');
+  //}
+
+  const date = new Date().toISOString();
+
+  return {
+    questID: requestBody.questID,
+    groupID: requestBody.groupID,
+    date: date,
+    user: user,
+    activity: requestBody.questActivity,
+  };
+};
+*/
+
 
 const submitExercise = exercise => {
   console.log('Submitting exercise');
@@ -433,9 +562,9 @@ const submitExercise = exercise => {
     .then(res => exercise);
 };
 
-const exerciseData = (exercisename, exercisetype, amount, note) => {
-  
-  updateActivity(amount)
+const exerciseData = (exercisename, exercisetype, amount, note, modifier, date) => {
+  // TODO should modifier affect activity too?
+  updateActivity(amount, date)
     .then(res => {
       console.log("Activity updated.");
     })
@@ -453,7 +582,6 @@ const exerciseData = (exercisename, exercisetype, amount, note) => {
     });
 */
   const timestamp = new Date().getTime();
-  const date = new Date().toISOString();
   if ( note == '') {
     note = ' ';
   }
@@ -465,11 +593,12 @@ const exerciseData = (exercisename, exercisetype, amount, note) => {
     amount: amount,
     updatedAt: timestamp,
     note: note,
+    modifier: modifier
   };
 };
 
-const updateActivity = (amount) => {
-  const date = new Date().toISOString().substr(0, 10);
+const updateActivity = (amount, date) => {
+  date = date.substr(0, 10);
   const activityInfo = {
     TableName: process.env.ACTIVITY_TABLE,
     Key: {

@@ -394,7 +394,7 @@ const saveAchievement = achievement => {
 
   const achievementInfo = {
     TableName: process.env.ACHIEVEMENT_TABLE,
-    Item: quest,
+    Item: achievement,
   };
   return dynamoDb.put(achievementInfo).promise()
     .then(res => achievement);

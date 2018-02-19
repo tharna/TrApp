@@ -58,6 +58,7 @@ import Vue from 'vue'
 import axios from 'axios'
 Vue.use(axios)
 export default {
+  props: ['activeName'],
   data () {
     return {
       quests: [
@@ -66,6 +67,7 @@ export default {
       addQuestActivityVisible: false,
       showQuestActivityVisible: false,
       loading: false,
+      loaded: false,
       questActivity: 1
     }
   },
@@ -109,8 +111,12 @@ export default {
       this.showQuestActivityVisible = true
     }
   },
-  created () {
-    this.getQuests()
+  watch: {
+    activeName: function () {
+      if (this.activeName === 'third' && this.loaded === false) {
+        this.getQuests()
+      }
+    }
   }
 
 }

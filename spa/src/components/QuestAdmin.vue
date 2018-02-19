@@ -83,6 +83,7 @@
         Tehtävän aloituspäivä<br>
         <el-date-picker
                   v-model="questActive"
+                  format="d.M.yyyy"
                   :picker-options="datePickerOpts"
                   placeholder="Tehtäväviikko">
         </el-date-picker>
@@ -91,6 +92,7 @@
         Tehtävän julkaisupäivä<br>
         <el-date-picker
                   v-model="questPublish"
+                  format="d.M.yyyy"
                   type="date"
                   :picker-options="datePickerOpts"
                   placeholder="Tehtävän julkaisu">
@@ -161,6 +163,7 @@
             Tehtävän aloituspäivä<br>
             <el-date-picker
                                               v-model="EquestActive"
+                                              format="d.M.yyyy"
                                               :picker-options="datePickerOpts"
                                               placeholder="Tehtäväviikko">
             </el-date-picker>
@@ -169,6 +172,7 @@
             Tehtävän julkaisupäivä<br>
             <el-date-picker
                                               v-model="EquestPublish"
+                                              format="d.M.yyyy"
                                               type="date"
                                               :picker-options="datePickerOpts"
                                               placeholder="Tehtävän julkaisu">

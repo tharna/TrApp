@@ -15,9 +15,17 @@
           </select>
         <el-input v-model="other" v-if="subcategory >= 100" placeholder="Laji"></el-input>
         </div>
-        <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number>
-        </p>
+        <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number> 1 piste = n. 15 minuttia liikuntaa<br>
+        <el-radio v-model="modifier" label="Kevyt">Kevyt</el-radio>
+        <el-radio v-model="modifier" label="Normaali">Normaali</el-radio>
+        <el-radio v-model="modifier" label="Rankka">Rankka</el-radio>
       </div>
+            <el-date-picker
+                                              v-model="date"
+                                              format="d.M.yyyy"
+                                              :picker-options="datePickerOpts"
+                                              placeholder="Treenipäivä">
+            </el-date-picker>
     </div>
     Muistiinpanot
     <el-input v-model="note" placeholder="Muistiinpanot" type="textarea"></el-input>
@@ -35,8 +43,16 @@ export default {
       amount: '',
       note: ' ',
       subcategory: 0,
+      date: '',
       loading: false,
-      other: ''
+      other: '',
+      modifier: 'Normaali',
+      datePickerOpts: {
+        firstDayOfWeek: 1,
+        disabledDate (time) {
+          return time.getTime() > Date.now()
+        }
+      }
     }
   },
   methods: {
@@ -50,7 +66,9 @@ export default {
         exercisename: this.categories.find(category => { return category.id === this.category }).name,
         exercisetype: type,
         amount: parseInt(this.amount),
-        note: this.note
+        note: this.note,
+        modifier: this.modifier,
+        date: (this.date === '') ? new Date() : this.date
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())
         this.$notify({

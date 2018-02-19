@@ -15,11 +15,11 @@
         <div class="columns medium-3" v-for="(exercise, index) in exercises">
           <div class="card" v-show="type == exercise.exercisename || type == 'Kaikki'">
             <div class="card-divider" v-bind:class="exercise.exercisename">
-              {{ exercise.exercisetype }} 
+              {{ exercise.exercisetype }} {{ exercise.amount | time }} 
               <el-rate
                  style="display: inline-block; float: right;"
                  disabled
-                 v-bind:value="exercises[index].amount | rating"
+                 v-bind:value="exercises[index] | rating"
                  >
               </el-rate>
 
@@ -42,11 +42,13 @@ import DynPopover from './DynPopover.vue'
 
 Vue.use(axios)
 export default {
+  props: ['activeName', 'updated'],
   data () {
     return {
       exercises: [
       ],
-      type: 'Kaikki'
+      type: 'Kaikki',
+      loaded: false
     }
   },
   components: {
@@ -60,27 +62,61 @@ export default {
   },
   filters: {
     rating: function (value) {
+      var rating
       switch (true) {
-        case (value === 1):
-          return 1
-        case (value >= 16):
-          return 5
-        case (value >= 8):
-          return 4
-        case (value >= 4):
-          return 3
-        case (value >= 2):
-          return 2
+        case (value.amount === 1):
+          rating = 1
+          break
+        case (value.amount >= 16):
+          rating = 5
+          break
+        case (value.amount >= 8):
+          rating = 4
+          break
+        case (value.amount >= 4):
+          rating = 3
+          break
+        case (value.amount >= 2):
+          rating = 2
+          break
       }
+      switch (value.modifier) {
+        case 'Kevyt':
+          rating--
+          break
+        case 'Rankka':
+          rating++
+          break
+      }
+      if (rating < 1) rating = 1
+      if (rating > 5) rating = 5
+      return rating
     },
     date: function (value) {
       return moment(String(value)).format('DD.MM.YYYY HH:mm')
+    },
+    time: function (value) {
+      var minutes = value % 4
+      var hours = (value - minutes) / 4
+      hours = (hours > 0) ? hours + 't ' : ''
+      minutes = (minutes > 0) ? minutes * 15 + 'min' : ''
+      return hours + minutes
     }
   },
-  created () {
-    this.getExercises()
+  watch: {
+    activeName: function () {
+      if (this.activeName === 'second' && this.loaded === false) {
+        this.getExercises()
+        this.loaded = true
+      }
+    },
+    updated: function () {
+      if (this.updated === true) {
+        this.loaded = false
+        this.$emit('update')
+      }
+    }
   }
-
 }
 </script>
 <style>

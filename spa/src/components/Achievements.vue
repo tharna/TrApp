@@ -1,30 +1,124 @@
 <template>
   <div>
-    <el-row v-for="achievement in achievements"  :key="achievement.name">
+    <el-row v-for="(achievement, index) in achievements">
       <el-col :span="4">
         <div style="text-align: center;">
-          <el-progress type="circle" :percentage="achievement.progress" :status="achievement.status" :width="55"></el-progress>
+          <el-progress type="circle" :percentage="achievement.progress" :status="achievement.status" :width="75"></el-progress>
         </div>
       </el-col>
-      <el-col :span="20">
-        <div><h4>{{ achievement.name }}</h4>{{ achievement.goal }}</div>
-        <hr>
+      <el-col :lg="16" :xs="20" sm="20">
+        <div><h4 style="display: inline-block;">{{ achievement.name }}</h4>
+
+              <el-rate
+                 style="display: inline-block; float: right;"
+                 disabled
+                 v-bind:value="achievement.level"
+                 >
+              </el-rate>
+          <br>
+          {{ achievement.achievementDesc }}</div>
+      </el-col>
+      <el-col :lg="4" :xs="24" :sm="24"  style="text-align: center;">
+        <el-button round @click="showAchievementActivity(achievement.achievementID)">Näytä tiedot</el-button>
+        <el-button v-if="achievement.isActive" type="primary" round @click="addAchievementActivity(achievement.achievementID)">Lisää suoritus</el-button>
       </el-col>
     </el-row>
+        <hr>
+
+    <el-dialog
+        title="Lisää suoritus"
+        :visible.sync="addAchievementVisible"
+        width="80%">
+          {{ currentAchievement.achievementDesc }}<br>
+        <span v-if="currentAchievement.achievementType==1">
+          Tehtävä suoritettu:<br>
+          <el-button @click.native="addAchievementActivity = false" round>Ei</el-button>
+          <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Kyllä</el-button>
+
+
+        </span>
+        <el-input-number v-if="currentAchievement.achievementType==2 "v-model="achievementActivity"></el-input-number> {{ currentAchievement.achievementMeasure }}
+          <span v-if="currentAchievement.type==2" slot="footer" class="dialog-footer">
+            <el-button @click.native="addAchievementVisible = false" round>Peruuta</el-button>
+            <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Tallenna</el-button>
+          </span>
+    </el-dialog>
+    <el-dialog
+        :title="currentAchievement.name"
+        :visible.sync="showAchievementVisible"
+        width="80%">
+      <p>{{ currentAchievement.achievementDesc }}</p>
+          <span slot="footer" class="dialog-footer">
+      <el-button @click.native="showAchievementVisible = false" round>OK</el-button>
+          </span>
+
+    </el-dialog>
+
+
   </div>
 </template>
 <script>
+import Vue from 'vue'
+import axios from 'axios'
+Vue.use(axios)
 export default {
+  props: ['activeName'],
   data () {
     return {
       achievements: [
-        { name: 'Juoksija', goal: 'Juokse yhteensä 100km', progress: 25, status: '' },
-        { name: 'Kiipijä', goal: 'Nouse yhteensä 1000 rappusta', progress: 40, status: '' },
-        { name: 'Vesipeto', goal: 'Ui yhteensä 10km', progress: 100, status: 'success' },
-        { name: 'Punnertaja', goal: 'Tee 100 punnerrusta kerralla', progress: 0, status: 'exception' }
-      ]
+      ],
+      loading: false,
+      loaded: false,
+      addAchievementVisible: false,
+      showAchievementVisible: false,
+      currentAchievement: {},
+      achievementActivity: 1
+    }
+  },
+  methods: {
+    getAchievements: function () {
+      axios.get('/data/achievement')
+        .then(response => { this.achievements = response.data.achievements })
+    },
+    postAchievement: function (achievementID) {
+      this.loading = true
+      axios.post('/data/achievement', {
+        // TODO add data from form
+      }).then(reponse => {
+        Object.assign(this.$data, this.$options.data())
+        this.loading = false
+        this.$notify({
+          title: 'Success',
+          message: 'Lisätty onnistuneesti',
+          type: 'success'
+        })
+        this.addAchievementVisible = false
+        this.getAchievements()
+      }).catch(err => {
+        console.log(err)
+        this.loading = false
+        this.$notify({
+          title: 'Virhe',
+          message: 'Lisäys ei onnistunut',
+          type: 'error'
+        })
+      })
+    },
+    addAchievementActivity: function (achievementID) {
+      this.currentAchievement = this.achievements.find(achievement => { return achievement.achievementID === achievementID })
+      this.addAchievementVisible = true
+    },
+    showAchievementActivity: function (achievementID) {
+      this.currentAchievement = this.achievements.find(achievement => { return achievement.achievementID === achievementID })
+      this.showAchievementVisible = true
+    }
+  },
+  watch: {
+    activeName: function () {
+      if (this.activeName === 'fourth' && this.loaded === false) {
+        this.getAchievements()
+      }
     }
   }
 }
 </script>
- 

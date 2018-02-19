@@ -2,16 +2,16 @@
   <div v-if="authenticated">
            <el-tabs v-model="activeName">
           <el-tab-pane label="Aktiivisuus" name="first">
-              <activity></activity>
+              <activity @update="updatePosted"></activity>
           </el-tab-pane>
           <el-tab-pane label="Treenit" name="second">
-            <exercises></exercises>
+            <exercises :activeName="activeName" :updated="updated" @update="updateLoaded"></exercises>
           </el-tab-pane>
           <el-tab-pane label="Tehtävät" name="third">
-            <quests></quests>
+            <quests :activeName="activeName"></quests>
           </el-tab-pane>
           <el-tab-pane label="Urotyöt" name="fourth">
-            <achievements></achievements>
+            <achievements :activeName="activeName"></achievements>
           </el-tab-pane>
           <el-tab-pane label="Tili" name="logout">
 
@@ -50,7 +50,8 @@ export default {
   data () {
     return {
       activeName: 'first',
-      admin: false
+      admin: false,
+      updated: false
     }
   },
   components: {
@@ -58,6 +59,14 @@ export default {
     Exercises,
     Achievements,
     Quests
+  },
+  methods: {
+    updateLoaded: function () {
+      this.updated = false
+    },
+    updatePosted: function () {
+      this.updated = true
+    }
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))

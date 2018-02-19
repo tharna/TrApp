@@ -2,11 +2,20 @@
   <div>
     <el-row>
       <el-col :span="24">
-        Aktiivisuus viimeisen viikon aikana:
+        <div style="padding: 5px 20px; text-align: center;">
+          <el-button @click="addExerciseVisible = true" type="primary" round>Lisää suoritus</el-button>
+    </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="24">
+        Aktiivisuus: <el-radio v-model="period" @change="getActivity" label="Viikko">Viikko</el-radio>
+        <el-radio v-model="period" @change="getActivity" label="Kuukausi">Kuukausi</el-radio>
+        <el-radio v-model="period" @change="getActivity" label="Treenijakso">Treenijakso</el-radio>
         <trend
         :data="activity"
-        :gradient="['#ff0000', '#ff5d00', '#ffff00', '#00ff00']"
-        :stroke-width="4"
+        :gradient="['#ff0000', '#ff5d00', '#ffff00', '#bfff00', '#80ff00', '#40ff00', '#00ff00']"
+        :stroke-width="2"
         auto-draw
         smooth>
         </trend>
@@ -33,19 +42,12 @@
         <el-progress-xp color="yellow" :percentage="user.level.air" :stroke-width="16"></el-progress-xp>
       </el-col>
     </el-row>
-    <el-row>
-      <el-col :span="24">
-    <div style="text-align:center; padding-top: 50px;">
-          <el-button @click="addExerciseVisible = true" type="primary" round>Lisää suoritus</el-button>
-    </div>
         <el-dialog
             title="Lisää suoritus"
             :visible.sync="addExerciseVisible"
             width="80%">
         <conditional-select :categories="categories" :subcategories="subcategories" v-model="treeni" @update="updateData"></conditional-select>
         </el-dialog>
-      </el-col>
-    </el-row>
   </div>
 </template>
 <script>
@@ -109,7 +111,9 @@ export default {
         { id: '103', category_id: '4', name: 'Muu kehonhuolto', selected: false }
       ],
       activity: [],
-      user: []
+      activity_cache: [],
+      user: [],
+      period: 'Viikko'
 
     }
   },
@@ -119,10 +123,15 @@ export default {
   },
   methods: {
     getActivity: function () {
-      axios.get('/data/activity')
-        .then(response => {
-          this.activity = response.data.activity // .activity.map((amount) => { return amount.total })
-        })
+      if (!(this.period in this.activity_cache)) {
+        axios.get('/data/activity', {params: {period: this.period}})
+          .then(response => {
+            this.activity_cache[this.period] = response.data.activity // .activity.map((amount) => { return amount.total })
+            this.activity = this.activity_cache[this.period]
+          })
+      } else {
+        this.activity = this.activity_cache[this.period]
+      }
     },
     getUserData: function () {
       axios.get('/data/user')
@@ -130,8 +139,10 @@ export default {
     },
     updateData: function () {
       this.getUserData()
+      this.activity_cache = []
       this.getActivity()
       this.addExerciseVisible = false
+      this.$emit('update')
     }
   },
   created () {

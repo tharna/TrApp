@@ -12,7 +12,7 @@
               {{ achievement.name }}
             </div>
             <div class="card-section">
-              <p>{{ achievement.active | date }}</p>
+              <p>{{ achievement.achievementActive | date }}</p>
               <el-button type="primary" round @click="editAchievement(achievement.achievementID)">Muokkaa</el-button> 
               <el-button type="primary" round @click="showAchievement(achievement.achievementID)">Suoritukset</el-button> 
             </div>
@@ -34,6 +34,7 @@
           <el-col :span=6>
             <el-radio v-model="achievementType" label="1">Suoritus</el-radio>
             <el-radio v-model="achievementType" label="2">Määrä</el-radio>
+            <el-radio v-model="achievementType" label="3">Putki</el-radio>
           </el-col>
           <el-col v-show="achievementType == 2" :span=6>
             <el-input v-model="achievementMeasure" placeholder="Yksikkö"></el-input>
@@ -44,7 +45,7 @@
           <el-col :span=18>
         Tasovaatimukset:
           </el-col>
-          <el-col v-show="achievementType == 2" :span=6>
+          <el-col v-show="achievementType == 2 || achievementType == 3" :span=6>
             Määrä:
           </el-col>
         </el-row>
@@ -53,7 +54,7 @@
             <el-input v-model="achievementLVL1" placeholder="Taso 1"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="achievementType == 2" v-model="achievementLVL1amount" placeholder="Taso 1"></el-input>
+            <el-input v-show="achievementType == 2 || achievementType == 3" v-model="achievementLVL1amount" placeholder="Taso 1"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -61,7 +62,7 @@
             <el-input v-model="achievementLVL2" placeholder="Taso 2"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="achievementType == 2" v-model="achievementLVL2amount" placeholder="Taso 2"></el-input>
+            <el-input v-show="achievementType == 2 || achievementType == 3" v-model="achievementLVL2amount" placeholder="Taso 2"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -69,7 +70,7 @@
             <el-input v-model="achievementLVL3" placeholder="Taso 3"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="achievementType == 2" v-model="achievementLVL3amount" placeholder="Taso 3"></el-input>
+            <el-input v-show="achievementType == 2 || achievementType == 3" v-model="achievementLVL3amount" placeholder="Taso 3"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -77,7 +78,7 @@
             <el-input v-model="achievementLVL4" placeholder="Taso 4"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="achievementType == 2" v-model="achievementLVL4amount" placeholder="Taso 4"></el-input>
+            <el-input v-show="achievementType == 2 || achievementType == 3" v-model="achievementLVL4amount" placeholder="Taso 4"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -85,7 +86,7 @@
             <el-input v-model="achievementLVL5" placeholder="Taso 5"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="achievementType == 2" v-model="achievementLVL5amount" placeholder="Taso 5"></el-input>
+            <el-input v-show="achievementType == 2 || achievementType == 3" v-model="achievementLVL5amount" placeholder="Taso 5"></el-input>
           </el-col>
         </el-row>
 
@@ -94,6 +95,7 @@
         Tehtävän aloituspäivä<br>
         <el-date-picker
                   v-model="achievementActive"
+                  format="d.M.yyyy"
                   :picker-options="datePickerOpts"
                   placeholder="Aloituspäivä">
         </el-date-picker>
@@ -102,6 +104,7 @@
         Tehtävän päättymispäivä<br>
         <el-date-picker
                   v-model="achievementActiveEnd"
+                  format="d.M.yyyy"
                   :picker-options="datePickerOpts"
                   placeholder="Päättymispäivä">
         </el-date-picker>
@@ -139,6 +142,7 @@
           <el-col :span=6>
             <el-radio v-model="EachievementType" label="1">Suoritus</el-radio>
             <el-radio v-model="EachievementType" label="2">Määrä</el-radio>
+            <el-radio v-model="EachievementType" label="3">Putki</el-radio>
           </el-col>
           <el-col v-show="EachievementType == 2" :span=6>
             <el-input v-model="EachievementMeasure" placeholder="Yksikkö"></el-input>
@@ -149,7 +153,7 @@
           <el-col :span=18>
         Tasovaatimukset:
           </el-col>
-          <el-col v-show="EachievementType == 2" :span=6>
+          <el-col v-show="EachievementType == 2 || EachievementType == 3" :span=6>
             Määrä:
           </el-col>
         </el-row>
@@ -158,7 +162,7 @@
             <el-input v-model="EachievementLVL1" placeholder="Taso 1"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="EachievementType == 2" v-model="EachievementLVL1amount" placeholder="Taso 1"></el-input>
+            <el-input v-show="EachievementType == 2 || EachievementType == 3" v-model="EachievementLVL1amount" placeholder="Taso 1"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -166,7 +170,7 @@
             <el-input v-model="EachievementLVL2" placeholder="Taso 2"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="EachievementType == 2" v-model="EachievementLVL2amount" placeholder="Taso 2"></el-input>
+            <el-input v-show="EachievementType == 2 || EachievementType == 3" v-model="EachievementLVL2amount" placeholder="Taso 2"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -174,7 +178,7 @@
             <el-input v-model="EachievementLVL3" placeholder="Taso 3"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="EachievementType == 2" v-model="EachievementLVL3amount" placeholder="Taso 3"></el-input>
+            <el-input v-show="EachievementType == 2 || EachievementType == 3" v-model="EachievementLVL3amount" placeholder="Taso 3"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -182,7 +186,7 @@
             <el-input v-model="EachievementLVL4" placeholder="Taso 4"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="EachievementType == 2" v-model="EachievementLVL4amount" placeholder="Taso 4"></el-input>
+            <el-input v-show="EachievementType == 2 || EachievementType == 3" v-model="EachievementLVL4amount" placeholder="Taso 4"></el-input>
           </el-col>
         </el-row>
         <el-row>
@@ -190,7 +194,7 @@
             <el-input v-model="EachievementLVL5" placeholder="Taso 5"></el-input>
           </el-col>
           <el-col :span=6>
-            <el-input v-show="EachievementType == 2" v-model="EachievementLVL5amount" placeholder="Taso 5"></el-input>
+            <el-input v-show="EachievementType == 2 || EachievementType == 3" v-model="EachievementLVL5amount" placeholder="Taso 5"></el-input>
           </el-col>
         </el-row>
 
@@ -199,6 +203,7 @@
             Tehtävän aloituspäivä<br>
             <el-date-picker
                                               v-model="EachievementActive"
+                                              format="d.M.yyyy"
                                               :picker-options="datePickerOpts"
                                               placeholder="Aloituspäivä">
             </el-date-picker>
@@ -207,6 +212,7 @@
             Tehtävän päättymispäivä<br>
             <el-date-picker
                                               v-model="EachievementActiveEnd"
+                                              format="d.M.yyyy"
                                               :picker-options="datePickerOpts"
                                               placeholder="Päättymispäivä">
             </el-date-picker>
@@ -217,6 +223,7 @@
             <el-date-picker
                                               v-model="EachievementPublish"
                                               type="date"
+                                              format="d.M.yyyy"
                                               :picker-options="datePickerOpts"
                                               placeholder="Tehtävän julkaisu">
             </el-date-picker>

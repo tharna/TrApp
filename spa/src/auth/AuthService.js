@@ -39,7 +39,6 @@ export default class AuthService {
         this.setSession(authResult)
         this.auth0.client.userInfo(authResult.accessToken, function (err, user) {
           localStorage.setItem('user_details', JSON.stringify(user))
-          console.log(user)
           console.log(err)
         })
         router.replace('home')
@@ -69,6 +68,7 @@ export default class AuthService {
     localStorage.removeItem('access_token')
     localStorage.removeItem('id_token')
     localStorage.removeItem('expires_at')
+    localStorage.removeItem('user_details')
     this.userProfile = null
     this.authNotifier.emit('authChange', false)
     // navigate to the home route
