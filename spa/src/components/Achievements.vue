@@ -48,6 +48,23 @@
         :visible.sync="showAchievementVisible"
         width="80%">
       <p>{{ currentAchievement.achievementDesc }}</p>
+      <el-row>
+        <el-col :span=24>
+          <el-rate style="display: inline-block;" disabled value="1"></el-rate> {{ currentAchievement.lvl1Desc }}
+        </el-col>
+        <el-col :span=24>
+          <el-rate style="display: inline-block;" disabled value="2"></el-rate> {{ currentAchievement.lvl2Desc }}
+        </el-col>
+        <el-col :span=24>
+          <el-rate style="display: inline-block;" disabled value="3"></el-rate> {{ currentAchievement.lvl3Desc }}
+        </el-col>
+        <el-col :span=24>
+          <el-rate style="display: inline-block;" disabled value="4"></el-rate> {{ currentAchievement.lvl4Desc }}
+        </el-col>
+        <el-col :span=24>
+          <el-rate style="display: inline-block;" disabled value="5"></el-rate> {{ currentAchievement.lvl5Desc }}
+        </el-col>
+      </el-row>
           <span slot="footer" class="dialog-footer">
       <el-button @click.native="showAchievementVisible = false" round>OK</el-button>
           </span>

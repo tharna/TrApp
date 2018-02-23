@@ -12,8 +12,7 @@
             </el-select></div>
       <hr>
       <el-row>
-      <el-col :span="24">
-        <div class="columns medium-3" v-for="quest in quests">
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="quest in quests">
           <div class="card" v-show="questFilter == quest.groupID || questFilter == 'Kaikki'">
             <div class="card-divider">
               {{ quest.name }} | {{ quest.groupID }}
@@ -24,7 +23,6 @@
               <el-button type="primary" round @click="showQuest(quest.questID)">Suoritukset</el-button> 
             </div>
           </div>
-        </div>
       </el-col>
     </el-row>
     <el-row>
@@ -76,6 +74,11 @@
             </el-container>
  
  
+         </el-col>
+        </el-row>
+        <el-row>
+        <el-col :span=24>
+          <el-checkbox v-model="grandQuest">Suurtehtävä</el-checkbox>
          </el-col>
         </el-row>
         <el-row>
@@ -149,10 +152,10 @@
           <el-col :xs=24 :sm=12>
             <el-radio v-model="EquestType" label="1">Suoritus</el-radio>
             <el-radio v-model="EquestType" label="2">Määrä</el-radio>
-            <el-container v-show="EquestType == 2">
+            <el-container>
               Vaadittu suoritus:<br/>
-            <el-input-number  v-model="amount" :min="1" :step="1"></el-input-number>
-            <el-input v-model="EquestMeasure" placeholder="Yksikkö"></el-input>
+            <el-input-number  v-model="Eamount" :min="1" :step="1"></el-input-number>
+            <el-input v-show="EquestType == 2" v-model="EquestMeasure" placeholder="Yksikkö"></el-input>
             </el-container>
  
  
@@ -179,6 +182,11 @@
             </el-date-picker>
           </el-col>
           </el-row>
+        <el-row>
+        <el-col :span=24>
+          <el-checkbox v-model="EgrandQuest">Suurtehtävä</el-checkbox>
+         </el-col>
+        </el-row>
           <el-row>
             <el-col :span="24">
             </el-col>
@@ -222,6 +230,7 @@ export default {
       questRepeat: '',
       questActive: '',
       questPublish: '',
+      grandQuest: false,
       datePickerOpts: {
         firstDayOfWeek: 1
       },
@@ -311,6 +320,7 @@ export default {
       EquestActive: ' ',
       EquestPublish: ' ',
       EquestScope: '1',
+      EgrandQuest: false,
       EquestID: ''
     }
   },
@@ -335,7 +345,8 @@ export default {
         questPublish: this.questPublish,
         questDays: this.questDays,
         questRepeat: this.questRepeat,
-        questScope: this.questScope
+        questScope: this.questScope,
+        grandQuest: this.grandQuest
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())
         this.$notify({
@@ -373,8 +384,9 @@ export default {
         questActive: this.EquestActive,
         questPublish: this.EquestPublish,
         questDays: this.EquestDays,
-        questScope: this.questScope,
-        questRepeat: this.EquestRepeat
+        questScope: this.EquestScope,
+        questRepeat: this.EquestRepeat,
+        grandQuest: this.EgrandQuest
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())
         this.$notify({
@@ -412,6 +424,7 @@ export default {
       this.EquestActive = quest.questActive
       this.EquestPublish = quest.questPublish
       this.EquestScope = quest.questScope
+      this.EgrandQuest = quest.grandQuest
       this.EquestID = quest.questID
       this.editQuestVisible = true
     },
@@ -446,7 +459,7 @@ export default {
   },
   filters: {
     date: function (value) {
-      return moment(String(value)).format('DD.MM.YYYY HH:mm')
+      return moment(String(value)).format('DD.MM.YYYY')
     }
   },
   created () {

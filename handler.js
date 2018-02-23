@@ -283,7 +283,7 @@ module.exports.getQuests = (event, context, callback) => {
   var params = {
     TableName: process.env.QUEST_TABLE,
     ScanIndexForward: false,
-    ProjectionExpression: "questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity",
+    ProjectionExpression: "questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity,grandQuest",
     ExpressionAttributeNames: {
       "#name": "name",
       "#type": "type"
@@ -314,16 +314,19 @@ module.exports.getQuests = (event, context, callback) => {
             questSuccess: '',
             questFailure: '',
             questDesc: quest.questDesc,
-            questStory: ''
+            questStory: '',
+            grandQuest: quest.grandQuest
           }
-          var untilDate = new Date( );
-          untilDate.setDate(untilDate.getDate(quest.questActive) + 6)
-
+          var untilDate = new Date(quest.questActive)
+          var offset = (quest.grandQuest) ? 90 : 6
+          untilDate.setDate(untilDate.getDate() + offset)
+          questObj.startDate = quest.questActive
+          questObj.endDate = untilDate.toISOString( )
           if( quest.questActive <= date) {
             questObj.questStory = quest.questStory
-          }
-          if( quest.questActive <= date && date <= untilDate.toISOString()) {
-            questObj.isActive = true;
+            if(date <= untilDate.toISOString()) {
+              questObj.isActive = true;
+            }
           }
           var members = 1
           var repeats = 1
@@ -343,14 +346,19 @@ module.exports.getQuests = (event, context, callback) => {
             }
           }, 0)
           questObj.progress = Math.round(progress / total * 100)
-          if ( questObj.progress >= 100) {
-            questObj.progress = 100
-            questObj.questSuccess = quest.questSuccess
-          } else if ( date >= untilDate.toISOString( )) {
-            questObj.questFailure = quest.questFailure
+          if ( date >= untilDate.toISOString( )) {
+            if ( questObj.progress >= 100) {
+              questObj.progress = 100
+              questObj.questSuccess = quest.questSuccess
+              questObj.status = "success"
+            } else {
+              questObj.questFailure = quest.questFailure
+              questObj.status = "failure"
+            }
           }
           // TODO: Check personal status      
           quests.push(questObj);
+
         } 
 
       });
@@ -360,7 +368,12 @@ module.exports.getQuests = (event, context, callback) => {
           "Access-Control-Allow-Origin": "*"
         },
         body: JSON.stringify({
-          quests: quests
+          quests: quests.sort(function(a,b) {
+            if (a.grandQuest) return 1
+            if (b.grandQuest) return -1
+            if (a.questActive > b.questActive) return 1
+            if (a.questActive < b.questActive) return -1
+          })
         })
       });
     }
@@ -457,6 +470,11 @@ module.exports.getAchievements = (event, context, callback) => {
             name: achievement.name,
             achievementMeasure: achievement.achievementMeasure,
             achievementDesc: achievement.achievementDesc,
+            lvl1Desc: achievement.achievementLVL1,
+            lvl2Desc: achievement.achievementLVL2,
+            lvl3Desc: achievement.achievementLVL3,
+            lvl4Desc: achievement.achievementLVL4,
+            lvl5Desc: achievement.achievementLVL5,
           }
 
           if( achievement.achievementActive <= date && date <= achievement.achievementActiveEnd) {

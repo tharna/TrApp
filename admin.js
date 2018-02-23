@@ -238,6 +238,7 @@ const questData = (requestBody) => {
     questDays: requestBody.questDays,
     questScope: requestBody.questScope,
     questRepeat: requestBody.questRepeat,
+    grandQuest: requestBody.grandQuest,
     activity: [{}]
   };
     //questActive: requestBody.questActive.substr(0, 10),

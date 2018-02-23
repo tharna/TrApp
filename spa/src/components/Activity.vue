@@ -112,7 +112,10 @@ export default {
       ],
       activity: [],
       activity_cache: [],
-      user: [],
+      user: {
+        current: [],
+        level: []
+      },
       period: 'Viikko'
 
     }

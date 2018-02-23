@@ -78,7 +78,13 @@ export default {
 
 <style>
 a {
-    cursor: pointer;
-  }
+  cursor: pointer;
+}
+.el-tabs__nav-wrap.is-scrollable {
+  padding: 0 50px;
+}
+.el-tabs__nav-next, .el-tabs__nav-prev {
+  padding: 0 20px;
+}
 </style>
 

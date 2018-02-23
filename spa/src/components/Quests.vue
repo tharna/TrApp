@@ -1,11 +1,10 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="24">
-        <div class="columns medium-3" v-for="quest in quests">
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="quest in quests">
           <div class="card">
-            <div class="card-divider upcoming" v-bind:class="quest.type">
-              {{ quest.name }}
+            <div class="card-divider" v-bind:class="questType(quest)">
+              {{ quest.name }}<br>{{ quest.startDate | date }} - {{ quest.endDate | date }}
             </div>
             <div class="card-section">
               <el-progress :percentage="quest.progress" :stroke-width="16"></el-progress>
@@ -15,7 +14,6 @@
               </div>
             </div>
           </div>
-        </div>
       </el-col>
     </el-row>
 
@@ -56,6 +54,7 @@
 <script>
 import Vue from 'vue'
 import axios from 'axios'
+import moment from 'moment'
 Vue.use(axios)
 export default {
   props: ['activeName'],
@@ -74,7 +73,14 @@ export default {
   methods: {
     getQuests: function () {
       axios.get('/data/quest')
-        .then(response => { this.quests = response.data.quests })
+        .then(response => {
+          this.quests = response.data.quests.sort(function (b, a) {
+            if (a.grandQuest) return 1
+            if (b.grandQuest) return -1
+            if (a.startDate > b.startDate) return 1
+            if (a.startDate < b.startDate) return -1
+          })
+        })
     },
     postQuest: function (questID) {
       this.loading = true
@@ -109,6 +115,16 @@ export default {
     showQuestActivity: function (questID) {
       this.currentQuest = this.quests.find(quest => { return quest.questID === questID })
       this.showQuestActivityVisible = true
+    },
+    questType: function (quest) {
+      if (quest.grandQuest) return 'grand'
+      if (quest.isActive) return 'active'
+      return quest.status
+    }
+  },
+  filters: {
+    date: function (value) {
+      return moment(String(value)).format('DD.MM.YYYY')
     }
   },
   watch: {
@@ -136,5 +152,17 @@ export default {
 }
 .card .upcoming {
 }
+.grand {
+  background-color: #6A5ACD;
+  color: #fff;
+}
+.active {
+  background-color: #20a0ff;
+  color: #fff;
+}
+.el-progress__text {
+  margin-left: 8px;
+}
+
 
 </style>

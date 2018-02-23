@@ -11,14 +11,19 @@
         </div>
         <hr>
       </el-col>
-      <el-col :span="24">
-        <div class="columns medium-3" v-for="(exercise, index) in exercises">
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="(exercise, index) in exercises">
           <div class="card" v-show="type == exercise.exercisename || type == 'Kaikki'">
             <div class="card-divider" v-bind:class="exercise.exercisename">
               {{ exercise.exercisetype }} {{ exercise.amount | time }} 
               <el-rate
                  style="display: inline-block; float: right;"
                  disabled
+                 :max="3"
+                 :low-threshold="1"
+                 :high-threshold="3"
+                 :icon-classes="['el-icon-circle-check-m', 'el-icon-circle-check-m', 'el-icon-circle-check-m']"
+                 disabled-void-icon-class="none"
+                 :colors="['#555', '#555', '#555']"
                  v-bind:value="exercises[index] | rating"
                  >
               </el-rate>
@@ -29,7 +34,6 @@
               <dyn-popover style="display: inline-block; float: right;" v-if="exercise.note && exercise.note != ' '" :index="index" :content="exercise.note"></dyn-popover>
             </div>
           </div>
-        </div>
       </el-col>
     </el-row>
   </div>
@@ -62,7 +66,8 @@ export default {
   },
   filters: {
     rating: function (value) {
-      var rating
+      var rating = 2
+      /*
       switch (true) {
         case (value.amount === 1):
           rating = 1
@@ -80,6 +85,7 @@ export default {
           rating = 2
           break
       }
+      */
       switch (value.modifier) {
         case 'Kevyt':
           rating--
@@ -93,7 +99,7 @@ export default {
       return rating
     },
     date: function (value) {
-      return moment(String(value)).format('DD.MM.YYYY HH:mm')
+      return moment(String(value)).format('DD.MM.YYYY')
     },
     time: function (value) {
       var minutes = value % 4
@@ -150,5 +156,12 @@ export default {
 }
 .card {
   border-radius: 5px;
+}
+.none {
+  display: none;
+}
+.el-icon-circle-check-m:before{
+  /*content: "\1F4AA";*/
+  content: "\1F605";
 }
 </style>

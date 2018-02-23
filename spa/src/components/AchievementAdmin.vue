@@ -438,7 +438,7 @@ export default {
   },
   filters: {
     date: function (value) {
-      return moment(String(value)).format('DD.MM.YYYY HH:mm')
+      return moment(String(value)).format('DD.MM.YYYY')
     }
   },
   created () {
