@@ -15,7 +15,13 @@
           </select>
         <el-input v-model="other" v-if="subcategory >= 100" placeholder="Laji"></el-input>
         </div>
-        <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number> 1 piste = n. 15 minuttia liikuntaa<br>
+        <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number> <el-tooltip content="1 piste = n. 15 minuttia liikuntaa">
+          <i class="el-icon-question"></i>
+        </el-tooltip>
+        <br>
+        Treenin rankkuus: <el-tooltip content="Kuinka raskaaksi koit treenin oman arviosi mukaan.">
+          <i class="el-icon-question"></i>
+        </el-tooltip><br>
         <el-radio v-model="modifier" label="Kevyt">Kevyt</el-radio>
         <el-radio v-model="modifier" label="Normaali">Normaali</el-radio>
         <el-radio v-model="modifier" label="Rankka">Rankka</el-radio>
