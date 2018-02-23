@@ -30,6 +30,7 @@
                                               v-model="date"
                                               format="d.M.yyyy"
                                               :picker-options="datePickerOpts"
+                                              value-format="yyyy-MM-dd"
                                               placeholder="Treenipäivä">
             </el-date-picker>
     </div>
@@ -49,7 +50,7 @@ export default {
       amount: '',
       note: ' ',
       subcategory: 0,
-      date: new Date(),
+      date: '',
       loading: false,
       other: '',
       modifier: 'Normaali',
@@ -74,7 +75,7 @@ export default {
         amount: parseInt(this.amount),
         note: this.note,
         modifier: this.modifier,
-        date: (this.date === '') ? new Date() : this.date
+        date: (this.date === '') ? new Date() : this.date + new Date().toISOString().substr(10)
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())
         this.$notify({
