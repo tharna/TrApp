@@ -49,7 +49,7 @@ export default {
       amount: '',
       note: ' ',
       subcategory: 0,
-      date: '',
+      date: new Date(),
       loading: false,
       other: '',
       modifier: 'Normaali',
