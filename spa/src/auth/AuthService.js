@@ -53,7 +53,7 @@ export default class AuthService {
   setSession (authResult) {
     // Set the time that the access token will expire at
     let expiresAt = JSON.stringify(
-      authResult.expiresIn * 86400 + new Date().getTime()
+      authResult.expiresIn * 1440 + new Date().getTime()
     )
     localStorage.setItem('access_token', authResult.accessToken)
     localStorage.setItem('id_token', authResult.idToken)
