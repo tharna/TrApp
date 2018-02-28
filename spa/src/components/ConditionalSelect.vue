@@ -67,32 +67,40 @@ export default {
       this.$emit('input', { amount: this.amount, laji: this.category, type: this.subcategory })
     },
     postExerciseData: function () {
-      this.loading = true
-      var type = (this.subcategory >= 100 && this.other !== '') ? this.other : this.subcategories.find(category => { return category.id === this.subcategory }).name
-      axios.post('/data', {
-        exercisename: this.categories.find(category => { return category.id === this.category }).name,
-        exercisetype: type,
-        amount: parseInt(this.amount),
-        note: this.note,
-        modifier: this.modifier,
-        date: (this.date === '') ? new Date() : this.date + new Date().toISOString().substr(10)
-      }).then(reponse => {
-        Object.assign(this.$data, this.$options.data())
-        this.$notify({
-          title: 'Success',
-          message: 'Treeni lisätty',
-          type: 'success'
-        })
-        this.$emit('update')
-      }).catch(err => {
-        console.log(err)
-        this.loading = false
+      if (this.category === 0 || this.subcategory === 0) {
         this.$notify({
           title: 'Virhe',
-          message: 'Treenin lisääminen ei onnistunut',
+          message: 'Treenin tyyppi tai laji puuttuu',
           type: 'error'
         })
-      })
+      } else {
+        this.loading = true
+        var type = (this.subcategory >= 100 && this.other !== '') ? this.other : this.subcategories.find(category => { return category.id === this.subcategory }).name
+        axios.post('/data', {
+          exercisename: this.categories.find(category => { return category.id === this.category }).name,
+          exercisetype: type,
+          amount: parseInt(this.amount),
+          note: this.note,
+          modifier: this.modifier,
+          date: (this.date === '') ? new Date() : this.date + new Date().toISOString().substr(10)
+        }).then(reponse => {
+          Object.assign(this.$data, this.$options.data())
+          this.$notify({
+            title: 'Success',
+            message: 'Treeni lisätty',
+            type: 'success'
+          })
+          this.$emit('update')
+        }).catch(err => {
+          console.log(err)
+          this.loading = false
+          this.$notify({
+            title: 'Virhe',
+            message: 'Treenin lisääminen ei onnistunut',
+            type: 'error'
+          })
+        })
+      }
     }
   },
   computed: {

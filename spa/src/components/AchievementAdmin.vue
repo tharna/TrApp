@@ -91,7 +91,7 @@
         </el-row>
 
         <el-row>
-        <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
         Tehtävän aloituspäivä<br>
         <el-date-picker
                   v-model="achievementActive"
@@ -100,7 +100,7 @@
                   placeholder="Aloituspäivä">
         </el-date-picker>
          </el-col>
-         <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
         Tehtävän päättymispäivä<br>
         <el-date-picker
                   v-model="achievementActiveEnd"
@@ -109,8 +109,7 @@
                   placeholder="Päättymispäivä">
         </el-date-picker>
          </el-col>
-
-        <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
         Tehtävän julkaisupäivä<br>
         <el-date-picker
                   v-model="achievementPublish"
@@ -199,7 +198,7 @@
         </el-row>
 
        <el-row>
-          <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
             Tehtävän aloituspäivä<br>
             <el-date-picker
                                               v-model="EachievementActive"
@@ -208,7 +207,7 @@
                                               placeholder="Aloituspäivä">
             </el-date-picker>
           </el-col>
-          <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
             Tehtävän päättymispäivä<br>
             <el-date-picker
                                               v-model="EachievementActiveEnd"
@@ -217,8 +216,7 @@
                                               placeholder="Päättymispäivä">
             </el-date-picker>
           </el-col>
- 
-          <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
             Tehtävän julkaisupäivä<br>
             <el-date-picker
                                               v-model="EachievementPublish"

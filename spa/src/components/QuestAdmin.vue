@@ -67,11 +67,9 @@
           <el-col :xs=24 :sm=12>
             <el-radio v-model="questType" label="1">Suoritus</el-radio>
             <el-radio v-model="questType" label="2">Määrä</el-radio>
-            <el-container>
-              Vaadittu suoritus:<br/>
-            <el-input-number  v-model="amount" :min="1" :step="1"></el-input-number>
+            <br/>Vaadittu suoritus:<br/>
+              <el-input-number  v-model="amount" :min="1" :step="1"></el-input-number><br/>
             <el-input v-show="questType == 2" v-model="questMeasure" placeholder="Yksikkö"></el-input>
-            </el-container>
  
  
          </el-col>
@@ -82,7 +80,7 @@
          </el-col>
         </el-row>
         <el-row>
-        <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
         Tehtävän aloituspäivä<br>
         <el-date-picker
                   v-model="questActive"
@@ -91,7 +89,7 @@
                   placeholder="Tehtäväviikko">
         </el-date-picker>
          </el-col>
-        <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
         Tehtävän julkaisupäivä<br>
         <el-date-picker
                   v-model="questPublish"
@@ -152,17 +150,15 @@
           <el-col :xs=24 :sm=12>
             <el-radio v-model="EquestType" label="1">Suoritus</el-radio>
             <el-radio v-model="EquestType" label="2">Määrä</el-radio>
-            <el-container>
-              Vaadittu suoritus:<br/>
+            <br/>Vaadittu suoritus:<br/>
             <el-input-number  v-model="Eamount" :min="1" :step="1"></el-input-number>
             <el-input v-show="EquestType == 2" v-model="EquestMeasure" placeholder="Yksikkö"></el-input>
-            </el-container>
  
  
          </el-col>
         </el-row>
         <el-row>
-          <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
             Tehtävän aloituspäivä<br>
             <el-date-picker
                                               v-model="EquestActive"
@@ -171,7 +167,7 @@
                                               placeholder="Tehtäväviikko">
             </el-date-picker>
           </el-col>
-          <el-col :span=6>
+        <el-col :xs=24 :sm=12 :lg=6>
             Tehtävän julkaisupäivä<br>
             <el-date-picker
                                               v-model="EquestPublish"

@@ -786,7 +786,7 @@ mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
 -----END CERTIFICATE-----`;
 
   userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] });
-  user = userInfo.email;
+  user = (userInfo.email) ? userInfo.email : userInfo.name;
 }
 
 const memberCount = (groupID) => {
