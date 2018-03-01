@@ -21,7 +21,7 @@
         title="Lisää suoritus"
         :visible.sync="addQuestActivityVisible"
         width="80%">
-          {{ currentQuest.questDesc }}<br>
+      <div v-html="currentQuest.questDesc"></div><br>
         <span v-if="currentQuest.type==1">
           Tehtävä suoritettu:<br>
           <el-button @click.native="addQuestActivityVisible = false" round>Ei</el-button>
@@ -39,10 +39,10 @@
         :title="currentQuest.name"
         :visible.sync="showQuestActivityVisible"
         width="80%">
-      <p>{{ currentQuest.questDesc }}</p>
-      <p>{{ currentQuest.questStory }}</p>
-      <p v-if="currentQuest.status == 'success'">{{ currentQuest.questSuccess }}</p>
-      <p v-if="currentQuest.status == 'failure'">{{ currentQuest.questFailure }}</p>
+      <div v-html="currentQuest.questDesc"></div>
+      <div v-html="currentQuest.questStory"></div>
+      <div v-if="currentQuest.status == 'success'" v-html="currentQuest.questSuccess"></div>
+        <div v-if="currentQuest.status == 'failure'" v-html="currentQuest.questFailure"></div>
           <span slot="footer" class="dialog-footer">
       <el-button @click.native="showQuestActivityVisible = false" round>OK</el-button>
           </span>

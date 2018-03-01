@@ -30,18 +30,27 @@
         :visible.sync="addAchievementVisible"
         width="80%">
           {{ currentAchievement.achievementDesc }}<br>
-        <span v-if="currentAchievement.achievementType==1">
-          Tehtävä suoritettu:<br>
+          {{ currentAchievement.currentLevelDesc }}
+          <span v-if="currentAchievement.achievementType==3">
+            <br>Pisin putki: {{ currentAchievement.bestStreak }}<br>
+          Tämänhetkinen putki: {{ currentAchievement.currentStreak }}
+          </span>
+        <span v-if="currentAchievement.achievementType==1 || currentAchievement.achievementType==3">
+          <br>Tehtävä suoritettu <span v-if="currentAchievement.achievementType==3">tänään</span>:<br>
           <el-button @click.native="addAchievementActivity = false" round>Ei</el-button>
           <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Kyllä</el-button>
-
-
         </span>
-        <el-input-number v-if="currentAchievement.achievementType==2 "v-model="achievementActivity"></el-input-number> {{ currentAchievement.achievementMeasure }}
-          <span v-if="currentAchievement.type==2" slot="footer" class="dialog-footer">
+        <span v-if="currentAchievement.achievementType==2">
+          <br>Tämänhetkinen edistyminen: {{ currentAchievement.total }} {{ currentAchievement.achievementMeasure }}<br>
+        <el-input-number v-model="achievementActivity"></el-input-number> {{ currentAchievement.achievementMeasure }}
+          <el-tooltip content="Määrä lisätään aiempiin suorituksiisi.">
+                      <i class="el-icon-question"></i>
+                              </el-tooltip>
+          <span slot="footer" class="dialog-footer">
             <el-button @click.native="addAchievementVisible = false" round>Peruuta</el-button>
             <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Tallenna</el-button>
           </span>
+        </span>
     </el-dialog>
     <el-dialog
         :title="currentAchievement.name"
@@ -101,6 +110,9 @@ export default {
       this.loading = true
       axios.post('/data/achievement', {
         // TODO add data from form
+        achievementID: this.currentAchievement.achievementID,
+        achievementActivity: this.achievementActivity,
+        achievementType: this.currentAchievement.achievementType
       }).then(reponse => {
         Object.assign(this.$data, this.$options.data())
         this.loading = false

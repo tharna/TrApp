@@ -20,7 +20,7 @@
             <div class="card-section">
               <p>{{ quest.questActive | date }}</p>
               <el-button type="primary" round @click="editQuest(quest.questID)">Muokkaa</el-button> 
-              <el-button type="primary" round @click="showQuest(quest.questID)">Suoritukset</el-button> 
+              <el-button type="primary" round @click="showQuest(quest.questID)">Näytä</el-button> 
             </div>
           </div>
       </el-col>
@@ -193,6 +193,20 @@
           <el-button type="primary" :loading="loadingSend" round @click.prevent="postEditQuest">Tallenna</el-button>
         </span>
     </el-dialog>
+    <el-dialog
+        :title="currentQuest.name"
+        :visible.sync="showQuestActivityVisible"
+        width="80%">
+      <div v-html="currentQuest.questDesc"></div>
+      <div v-html="currentQuest.questStory"></div>
+      <div v-if="currentQuest.status == 'success'" v-html="currentQuest.questSuccess"></div>
+        <div v-if="currentQuest.status == 'failure'" v-html="currentQuest.questFailure"></div>
+          <span slot="footer" class="dialog-footer">
+      <el-button @click.native="showQuestActivityVisible = false" round>OK</el-button>
+          </span>
+
+    </el-dialog>
+
 
 
 
@@ -317,7 +331,9 @@ export default {
       EquestPublish: ' ',
       EquestScope: '1',
       EgrandQuest: false,
-      EquestID: ''
+      EquestID: '',
+      showQuestActivityVisible: false,
+      currentQuest: {}
     }
   },
   methods: {
@@ -449,8 +465,9 @@ export default {
         })
       })
     },
-    showQuest: function (questID, event) {
-      this.loading = true
+    showQuest: function (questID) {
+      this.currentQuest = this.quests.find(quest => { return quest.questID === questID })
+      this.showQuestActivityVisible = true
     }
   },
   filters: {
