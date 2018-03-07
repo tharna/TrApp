@@ -1,7 +1,7 @@
 'use strict'
 
 const uuid = require('uuid')
-const AWS = require('aws-sdk'); 
+const AWS = require('aws-sdk') 
 const jwt = require('jsonwebtoken')
 
 AWS.config.setPromisesDependency(require('bluebird'))
@@ -37,7 +37,7 @@ module.exports.submit = (event, context, callback) => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully submitted exercise data',
@@ -49,7 +49,7 @@ module.exports.submit = (event, context, callback) => {
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to submit exercise data`
+          message: 'Unable to submit exercise data'
         })
       })
     })
@@ -59,29 +59,29 @@ module.exports.get = (event, context, callback) => {
   setUserInfo(event) 
   var params = {
     TableName: process.env.EXERCISE_TABLE,
-    ProjectionExpression: "exercisename, exercisetype, amount, note, #date, modifier",
+    ProjectionExpression: 'exercisename, exercisetype, amount, note, #date, modifier',
     ExpressionAttributeNames: {
-      "#date": "date",
+      '#date': 'date',
     },
-    KeyConditionExpression: "userID = :user",
+    KeyConditionExpression: 'userID = :user',
     ExpressionAttributeValues: {
-      ":user": user
+      ':user': user
     },
     ScanIndexForward: false
   }
 
-  console.log("Scanning exercise table.")
+  console.log('Scanning exercise table.')
   const onScan = (err, data) => {
 
     if (err) {
       console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
       callback(err)
     } else {
-      console.log("Scan succeeded.")
+      console.log('Scan succeeded.')
       return callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           exercises: data.Items
@@ -139,40 +139,40 @@ module.exports.getActivity = (event, context, callback) => {
   var date = new Date()
   var offset
   switch (period) {
-    case 'Kuukausi':
-      offset = 29
-      break
-    case 'Treenijakso':
-      offset = 89
-      break
-    default:
-      offset = 6
+  case 'Kuukausi':
+    offset = 29
+    break
+  case 'Treenijakso':
+    offset = 89
+    break
+  default:
+    offset = 6
   }
   date.setDate(date.getDate() - offset)
   var dateString = date.toISOString().substr(0, 10)
   checkActivity()
   var params = {
     TableName: process.env.ACTIVITY_TABLE,
-    ProjectionExpression: "#total, #date",
-    KeyConditionExpression: "userID = :user AND #date > :date",
+    ProjectionExpression: '#total, #date',
+    KeyConditionExpression: 'userID = :user AND #date > :date',
     ExpressionAttributeNames: {
-      "#total": "total",
-      "#date": "date",
+      '#total': 'total',
+      '#date': 'date',
     },
     ExpressionAttributeValues: {
-      ":user": user,
-      ":date": dateString
+      ':user': user,
+      ':date': dateString
     }
   }
 
-  console.log("Scanning exercise table.")
+  console.log('Scanning exercise table.')
   const onScan = (err, data) => {
 
     if (err) {
       console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
       callback(err)
     } else {
-      console.log("Scan succeeded.")
+      console.log('Scan succeeded.')
       var activity = new Array()
       var result
       for(var i=offset;i>=0;i--) {
@@ -189,7 +189,7 @@ module.exports.getActivity = (event, context, callback) => {
       return callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           activity: activity
@@ -219,11 +219,11 @@ module.exports.getUser = (event, context, callback) => {
         console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
         callback(err)
       } else {
-        console.log("Scan succeeded.")
+        console.log('Scan succeeded.')
         return callback(null, {
           statusCode: 200,
           headers: {
-            "Access-Control-Allow-Origin": "*"
+            'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
             user: calculateLevels(data.Item)
@@ -235,7 +235,7 @@ module.exports.getUser = (event, context, callback) => {
 
   })
     .catch(err => {
-      console.log("Error fetching user:", err)
+      console.log('Error fetching user:', err)
     })
 
   const calculateLevels = (item) => {
@@ -286,25 +286,25 @@ module.exports.getQuests = (event, context, callback) => {
   var params = {
     TableName: process.env.QUEST_TABLE,
     ScanIndexForward: false,
-    ProjectionExpression: "questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity,grandQuest",
+    ProjectionExpression: 'questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity,grandQuest',
     ExpressionAttributeNames: {
-      "#name": "name",
-      "#type": "type"
+      '#name': 'name',
+      '#type': 'type'
     },
-    FilterExpression: "groupID = :group OR groupID = :all",
+    FilterExpression: 'groupID = :group OR groupID = :all',
     ExpressionAttributeValues: {
-      ":group": userInfo["https://app.aikojentanssi.fi/group"].toString(),
-      ":all": "Yhteinen",
+      ':group': userInfo['https://app.aikojentanssi.fi/group'].toString(),
+      ':all': 'Yhteinen',
     }
   }
 
-  console.log("Scanning quest table.")
+  console.log('Scanning quest table.')
   const onScan = (err, data) => {
     if (err) {
       console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
       callback(err)
     } else {
-      console.log("Scan succeeded.")
+      console.log('Scan succeeded.')
       var quests = new Array()
       data.Items.forEach((quest, index) => {
         if( quest.questPublish <= date) {
@@ -353,10 +353,10 @@ module.exports.getQuests = (event, context, callback) => {
             if ( questObj.progress >= 100) {
               questObj.progress = 100
               questObj.questSuccess = quest.questSuccess
-              questObj.status = "success"
+              questObj.status = 'success'
             } else {
               questObj.questFailure = quest.questFailure
-              questObj.status = "failure"
+              questObj.status = 'failure'
             }
           }
           // TODO: Check personal status      
@@ -368,7 +368,7 @@ module.exports.getQuests = (event, context, callback) => {
       return callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           quests: quests.sort(function(a,b) {
@@ -392,7 +392,7 @@ module.exports.postQuest = (event, context, callback) => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully submitted quest activity',
@@ -404,7 +404,7 @@ module.exports.postQuest = (event, context, callback) => {
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to submit quest activity`
+          message: 'Unable to submit quest activity'
         })
       })
     })
@@ -419,11 +419,11 @@ const submitQuest = quest => {
       questID: quest.questID,
       groupID: quest.groupID
     },
-    UpdateExpression: "SET activity = list_append(activity, :activity)",
+    UpdateExpression: 'SET activity = list_append(activity, :activity)',
     ExpressionAttributeValues: {
-      ":activity": [{user: user, amount: quest.activity, date: date }]
+      ':activity': [{user: user, amount: quest.activity, date: date }]
     },
-    ReturnValues: "UPDATED_NEW"
+    ReturnValues: 'UPDATED_NEW'
   }
   // TODO: add individual activity record
 
@@ -456,13 +456,13 @@ module.exports.getAchievements = (event, context, callback) => {
     ScanIndexForward: false,
   }
 
-  console.log("Scanning achievement table.")
+  console.log('Scanning achievement table.')
   const onScan = (err, data) => {
     if (err) {
       console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
       callback(err)
     } else {
-      console.log("Scan succeeded.")
+      console.log('Scan succeeded.')
       getUserAchievements().then(res => {
 
         console.log(res)
@@ -507,7 +507,7 @@ module.exports.getAchievements = (event, context, callback) => {
         return callback(null, {
           statusCode: 200,
           headers: {
-            "Access-Control-Allow-Origin": "*"
+            'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
             achievements: achievements
@@ -529,7 +529,7 @@ module.exports.postAchievement = (event, context, callback) => {
         callback(null, {
           statusCode: 200,
           headers: {
-            "Access-Control-Allow-Origin": "*"
+            'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
             message: 'Sucessfully submitted achievement activity'
@@ -541,7 +541,7 @@ module.exports.postAchievement = (event, context, callback) => {
         callback(null, {
           statusCode: 500,
           body: JSON.stringify({
-            message: `Unable to submit achievement activity`
+            message: 'Unable to submit achievement activity'
           })
         })
       })
@@ -551,20 +551,20 @@ module.exports.postAchievement = (event, context, callback) => {
 const getUserAchievements = () => {
   var params = {
     TableName: process.env.ACHIEVEMENT_ACTIVITY_TABLE,
-    KeyConditionExpression: "userID = :user",
+    KeyConditionExpression: 'userID = :user',
     ExpressionAttributeValues: {
-      ":user": user
+      ':user': user
     },
   }
 
-  console.log("Scanning achievement activity table.")
+  console.log('Scanning achievement activity table.')
   const onScan = (err, data) => {
 
     if (err) {
       console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
       callback(err)
     } else {
-      console.log("Scan succeeded.")
+      console.log('Scan succeeded.')
       return data.Items
     }
   }
@@ -581,14 +581,14 @@ const getUserAchievementById = (id) => {
     },
   }
 
-  console.log("Scanning achievement activity table.")
+  console.log('Scanning achievement activity table.')
   const onScan = (err, data) => {
 
     if (err) {
       console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
       callback(err)
     } else {
-      console.log("Scan succeeded.")
+      console.log('Scan succeeded.')
       return data.Item
     }
   }
@@ -669,18 +669,18 @@ const exerciseData = (exercisename, exercisetype, amount, note, modifier, date) 
   // TODO should modifier affect activity too?
   updateActivity(amount, date)
     .then(res => {
-      console.log("Activity updated.")
+      console.log('Activity updated.')
     })
     .catch(err => {
-      console.log("Updating activity failed:", err)
+      console.log('Updating activity failed:', err)
     })
 
   updateLevels(amount, exercisename)
     .then(res => {
-      console.log("Levels updated.")
+      console.log('Levels updated.')
     })
     .catch(err => {
-      console.log("Updating levels failed:", err)
+      console.log('Updating levels failed:', err)
     })
 
   const timestamp = new Date().getTime()
@@ -707,14 +707,14 @@ const updateActivity = (amount, date) => {
       userID: user,
       date: date,
     },
-    UpdateExpression: "add #total :amount" ,
+    UpdateExpression: 'add #total :amount' ,
     ExpressionAttributeNames: {
-      "#total": "total",
+      '#total': 'total',
     },
     ExpressionAttributeValues: {
-      ":amount": amount,
+      ':amount': amount,
     },
-    ReturnValues:"UPDATED_NEW",
+    ReturnValues:'UPDATED_NEW',
   }
   return dynamoDb.update(activityInfo).promise()
     .then(res => activityInfo)
@@ -727,15 +727,15 @@ const updateLevels = (amount, exercisename) => {
     Key: {
       userID: user,
     },
-    UpdateExpression: "SET #level.#element = #level.#element + :amount",
+    UpdateExpression: 'SET #level.#element = #level.#element + :amount',
     ExpressionAttributeNames: {
-      "#level": "level",
-      "#element": element,
+      '#level': 'level',
+      '#element': element,
     },
     ExpressionAttributeValues: {
-      ":amount": amount,
+      ':amount': amount,
     },
-    ReturnValues:"UPDATED_NEW",
+    ReturnValues:'UPDATED_NEW',
   }
   return dynamoDb.update(levelInfo).promise()
     .then(res => levelInfo)
@@ -744,10 +744,10 @@ const updateLevels = (amount, exercisename) => {
 const getElement = (exercisename) => {
   // TODO actually get element based on exercise type
   const elements = {
-    Lihaskunto: "fire",
-    Kestävyys: "earth",
-    Ketteryys: "water",
-    Kehonhuolto: "air",
+    Lihaskunto: 'fire',
+    Kestävyys: 'earth',
+    Ketteryys: 'water',
+    Kehonhuolto: 'air',
   }
   return elements[exercisename]
 }
@@ -760,23 +760,23 @@ const checkUser = () => {
     },
   }
 
-  console.log("Check user.")
+  console.log('Check user.')
   const onScan = (err, data) => {
 
     if (err) {
-      console.log("Error getting user.")
+      console.log('Error getting user.')
     } else {
       if (!data.Item) {
         addUser()
           .then(res => {
-            console.log("User added.")
+            console.log('User added.')
           })
           .catch(err => {
 
-            console.log("adding user failed:", err)
+            console.log('adding user failed:', err)
           })
       }
-      console.log("User found.")
+      console.log('User found.')
     }
   }
 
@@ -797,7 +797,7 @@ const addUser = userData => {
       group: 0,
     },
   }
-  console.log("Adding new user.")
+  console.log('Adding new user.')
   return dynamoDb.put(userInfo).promise( )
     .then(res => userData)
 }
@@ -811,22 +811,22 @@ const checkActivity = () => {
     },
   }
 
-  console.log("Scanning activity table.")
+  console.log('Scanning activity table.')
   const onScan = (err, data) => {
 
     if (err) {
-      console.log("Activity scan failed.")
+      console.log('Activity scan failed.')
     } else {
       if (!data.Item) {
         addActivity()
           .then(res => {
-            console.log("Activity added succesfully.")
+            console.log('Activity added succesfully.')
           })
           .catch(err => {
-            console.log("Adding activity failed:", err)
+            console.log('Adding activity failed:', err)
           })
       }
-      console.log("Activity scan succeeded.")
+      console.log('Activity scan succeeded.')
     }
   }
 
@@ -843,7 +843,7 @@ const addActivity = activity => {
       total: 0,
     },
   }
-  console.log("Adding new activity record.")
+  console.log('Adding new activity record.')
   return dynamoDb.put(activityInfo).promise()
     .then(res => activity)
 }
