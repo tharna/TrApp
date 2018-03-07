@@ -6,7 +6,7 @@
           <el-progress type="circle" :percentage="achievement.progress" :status="achievement.status" :width="75"></el-progress>
         </div>
       </el-col>
-      <el-col :lg="16" :xs="20" sm="20">
+      <el-col :lg="16" :xs="20" :sm="20">
         <div><h4 style="display: inline-block;">{{ achievement.name }}</h4>
 
               <el-rate
@@ -33,7 +33,7 @@
           {{ currentAchievement.currentLevelDesc }}
           <span v-if="currentAchievement.achievementType==3">
             <br>Pisin putki: {{ currentAchievement.bestStreak }}<br>
-          Tämänhetkinen putki: {{ currentAchievement.currentStreak }}
+          Tämänhetkinen putki: {{ currentAchievement.activity }}
           </span>
         <span v-if="currentAchievement.achievementType==1 || currentAchievement.achievementType==3">
           <br>Tehtävä suoritettu <span v-if="currentAchievement.achievementType==3">tänään</span>:<br>
@@ -41,12 +41,12 @@
           <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Kyllä</el-button>
         </span>
         <span v-if="currentAchievement.achievementType==2">
-          <br>Tämänhetkinen edistyminen: {{ currentAchievement.total }} {{ currentAchievement.achievementMeasure }}<br>
+          <br>Tämänhetkinen edistyminen: {{ currentAchievement.activity }} {{ currentAchievement.achievementMeasure }}<br>
         <el-input-number v-model="achievementActivity"></el-input-number> {{ currentAchievement.achievementMeasure }}
           <el-tooltip content="Määrä lisätään aiempiin suorituksiisi.">
                       <i class="el-icon-question"></i>
                               </el-tooltip>
-          <span slot="footer" class="dialog-footer">
+                              <br><span slot="footer" class="dialog-footer">
             <el-button @click.native="addAchievementVisible = false" round>Peruuta</el-button>
             <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Tallenna</el-button>
           </span>
@@ -109,7 +109,6 @@ export default {
     postAchievement: function (achievementID) {
       this.loading = true
       axios.post('/data/achievement', {
-        // TODO add data from form
         achievementID: this.currentAchievement.achievementID,
         achievementActivity: this.achievementActivity,
         achievementType: this.currentAchievement.achievementType

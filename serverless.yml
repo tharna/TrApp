@@ -10,6 +10,7 @@ provider:
     EXERCISE_TABLE: "exercisedata-${opt:stage, self:provider.stage}"
     ACTIVITY_TABLE: "activitydata-${opt:stage, self:provider.stage}"
     ACHIEVEMENT_TABLE: "achievements-${opt:stage, self:provider.stage}"
+    ACHIEVEMENT_ACTIVITY_TABLE: "achievementActivity-${opt:stage, self:provider.stage}"
     QUEST_TABLE: "quest-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
@@ -248,6 +249,30 @@ resources:
         StreamSpecification:
           StreamViewType: "NEW_AND_OLD_IMAGES"
         TableName: ${self:provider.environment.ACHIEVEMENT_TABLE}
+    AchievementActivityDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "achievementID"
+            AttributeType: "S"
+          -
+            AttributeName: "userID"
+            AttributeType: "S"
+        KeySchema:
+          -
+            AttributeName: "userID"
+            KeyType: "HASH"
+          -
+            AttributeName: "achievementID"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.ACHIEVEMENT_ACTIVITY_TABLE}
     QuestDynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain

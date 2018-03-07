@@ -465,7 +465,6 @@ module.exports.getAchievements = (event, context, callback) => {
       console.log('Scan succeeded.')
       getUserAchievements().then(res => {
 
-        console.log(res)
         var achievements = new Array()
         data.Items.forEach((achievement, index) => {
           if( achievement.achievementPublish <= date) {
@@ -481,21 +480,62 @@ module.exports.getAchievements = (event, context, callback) => {
               lvl3Desc: achievement.achievementLVL3,
               lvl4Desc: achievement.achievementLVL4,
               lvl5Desc: achievement.achievementLVL5,
+              currentLevelDesc: achievement.achievementLVL1,
+              level: 0,
+              progress: 0
             }
 
             if( achievement.achievementActive <= date && date <= achievement.achievementActiveEnd) {
               achievementObj.isActive = true
             }
 
-            userAchievement = res.Items.find(item => { return item.achievementID === achievementObj.achievementID })
-            console.log( userAchievement)
+            if (userAchievement = res.Items.find(item => { return item.achievementID === achievementObj.achievementID })) {
+              achievementObj.activity = userAchievement.activity
+
+              if ( achievement.type == 1) {
+                achievementObj.level = userAchievement.activity
+              } else {
+                var next = achievementObj.achievementLVL1amount
+                if ( achievement.type == 3) {
+                  achievementObj.bestStreak = userAchievement.streak
+                  achievementObj.activity = userAchievement.streak
+                }
+                var next = achievement.achievementLVL1amount
+                if ( achievementObj.activity >= achievement.achievementLVL1amount) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL2amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL2
+                }
+                if ( achievementObj.activity >= achievement.achievementLVL2amount) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL3amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL3
+                }
+                if ( achievementObj.activity >= achievement.achievementLVL3amount) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL4amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL4
+                }
+                if ( achievementObj.activity >= achievement.achievementLVL4amount) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL5amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL5
+                }
+                if ( achievementObj.activity >= achievement.achievementLVL5amount) {
+                  achievementObj.level++
+                  next = achievementObj.activity
+                }
+                achievementObj.progress = Math.round(achievementObj.activity / next * 100)
+              }
+
+              console.log( achievement)
+              console.log( userAchievement)
+            }
             //  TODO calculate level
             //  TODO assign currentLevelDesc
             //  TODO calculate progress
             //  TODO if type == 3 calculate currentStreak and bestStreak
             //  TODO if type == 2 calculate total
-            achievementObj.level = 2
-            achievementObj.progress = 35
 
             // TODO: Check personal status      
             // TODO: progress and level completion
@@ -607,41 +647,29 @@ const submitAchievement = achievement => {
 }
 
 const achievementData = (requestBody, achievement) => {
-
-  // TODO check old achievement status
-  // TODO update values
-  // TODO add bestStreak and currentStreak if type == 3
-  // TODO update total if type == 2
-  // TODO if type == 1 increase activity by 1
-
   const date = new Date().toISOString().substr(0, 10)
   var date2 = new Date()
-  date2 = date2.setDate(date2.getDate() - 1).toISOString().subst(0, 10)
-  var streak = 0
-  var activity = 0
-
-  if ( achievement.Item) {
-    if ( requestBody.achievementType == 3) {
-      if ( achievement.Item.date != date && achievement.Item.date > date2) {
+  date2.setDate(date2.getDate() - 1)
+  date2 = date2.toISOString().substr(0, 10)
+  var streak = 1
+  var activity = 1
+  if (achievement.Item) {
+    if (requestBody.achievementType == 3) {
+      streak = achievement.Item.streak
+      if (achievement.Item.date != date && achievement.Item.date > date2) {
         activity = achievement.Item.activity + 1
         if (activity > achievement.Item.streak) {
           streak = activity
         }
-      } else {
-        activity = 1
       }
-
     } else if ( requestBody.achievementType == 1)  {
       activity = achievement.Item.activity + 1
     } else {
-      activity = achievement.Item.activity + requestBody.activity
+      activity = achievement.Item.activity + parseInt(requestBody.achievementActivity)
     }
-
   } else {
-    activity = requestBody.activity
+    activity = parseInt(requestBody.achievementActivity)
   }
-
-  console.log(achievement)
 
   return {
     achievementID: requestBody.achievementID,
@@ -650,10 +678,7 @@ const achievementData = (requestBody, achievement) => {
     streak: streak,
     activity: activity,
   }
-
 }
-
-
 
 const submitExercise = exercise => {
   console.log('Submitting exercise')
@@ -850,24 +875,24 @@ const addActivity = activity => {
 
 const setUserInfo = event => {
   const pubKey = `-----BEGIN CERTIFICATE-----
-  MIIDCTCCAfGgAwIBAgIJSnIFajlclSxIMA0GCSqGSIb3DQEBCwUAMCIxIDAeBgNV
-  BAMTF2FyY3RpY2xvb24uZXUuYXV0aDAuY29tMB4XDTE3MTIwNjEwNTAwNFoXDTMx
-  MDgxNTEwNTAwNFowIjEgMB4GA1UEAxMXYXJjdGljbG9vbi5ldS5hdXRoMC5jb20w
-  ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDkX7IPRIaFSHnhKXgSbpbY
-  lyE6nHsYFlh0H2O7XAlcZJCyaj+fjLnQlxODuEnOTaKoSJ8L5FZ4o2wWL/AX1TJo
-  OfiCsduW/J2hL4kfzAz8XNdwAKlehupLHcsAL8WXwcvkp2SLPAicKB3OFnHx2pkY
-  4qr6eqeqD2zF4pUR+iOliu38KZtiu/AYTLVfvS0CLwcacT1wf/3JAoffJAM74Roe
-  Ynycca/2JQqLRcxB3Sl1JAOpHAqx6+AiT95UCyjUynuUFoXu/LzQ4l8YgYulAgU3
-  L5iwLmzMBBkB5dbk9ZHSSVZG7ajNyK8J6aoMcmFGPn3XQsMYsIT1ZJ+qAR4P9c2D
-  AgMBAAGjQjBAMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFFatn+dezvf/gDfA
-  rnJkOK1XGAJgMA4GA1UdDwEB/wQEAwIChDANBgkqhkiG9w0BAQsFAAOCAQEAbDo7
-  e4pmPgmRmp2vg9exLLE11l4Cd1SNyNCZdsUZYnoykUsh6AjGyjP4j5jnIG4fJcvP
-  GZhLOVuUjTQ+I051jLiTc22se70TBnkQRe0kA5JCEyUOMMh9yE43gFQB4Xgma174
-  Ds4dOQYJqLYlmduaVdEotGWH1cPESzQhdG/Rj92dZT8MCCcQgWOmIWLdCZirxvT+
-    XHpij2FyOMscbKxpJ0XorMUvdezkdhRWRX3FXKSlHThPYkzUWnxRkt+PSpUuVFA/
-    mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
-    0ZowFWWHPSGDAnPROw== \ 
-  -----END CERTIFICATE-----`
+MIIDCTCCAfGgAwIBAgIJSnIFajlclSxIMA0GCSqGSIb3DQEBCwUAMCIxIDAeBgNV
+BAMTF2FyY3RpY2xvb24uZXUuYXV0aDAuY29tMB4XDTE3MTIwNjEwNTAwNFoXDTMx
+MDgxNTEwNTAwNFowIjEgMB4GA1UEAxMXYXJjdGljbG9vbi5ldS5hdXRoMC5jb20w
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDkX7IPRIaFSHnhKXgSbpbY
+lyE6nHsYFlh0H2O7XAlcZJCyaj+fjLnQlxODuEnOTaKoSJ8L5FZ4o2wWL/AX1TJo
+OfiCsduW/J2hL4kfzAz8XNdwAKlehupLHcsAL8WXwcvkp2SLPAicKB3OFnHx2pkY
+4qr6eqeqD2zF4pUR+iOliu38KZtiu/AYTLVfvS0CLwcacT1wf/3JAoffJAM74Roe
+Ynycca/2JQqLRcxB3Sl1JAOpHAqx6+AiT95UCyjUynuUFoXu/LzQ4l8YgYulAgU3
+L5iwLmzMBBkB5dbk9ZHSSVZG7ajNyK8J6aoMcmFGPn3XQsMYsIT1ZJ+qAR4P9c2D
+AgMBAAGjQjBAMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFFatn+dezvf/gDfA
+rnJkOK1XGAJgMA4GA1UdDwEB/wQEAwIChDANBgkqhkiG9w0BAQsFAAOCAQEAbDo7
+e4pmPgmRmp2vg9exLLE11l4Cd1SNyNCZdsUZYnoykUsh6AjGyjP4j5jnIG4fJcvP
+GZhLOVuUjTQ+I051jLiTc22se70TBnkQRe0kA5JCEyUOMMh9yE43gFQB4Xgma174
+Ds4dOQYJqLYlmduaVdEotGWH1cPESzQhdG/Rj92dZT8MCCcQgWOmIWLdCZirxvT+
+XHpij2FyOMscbKxpJ0XorMUvdezkdhRWRX3FXKSlHThPYkzUWnxRkt+PSpUuVFA/
+mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
+0ZowFWWHPSGDAnPROw== \ 
+-----END CERTIFICATE-----`;
 
   userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] })
   user = (userInfo.email) ? userInfo.email : userInfo.name
