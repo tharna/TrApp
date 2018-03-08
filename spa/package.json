@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "EventEmitter": "^1.0.0",
-    "auth0-js": "^8.8.0",
+    "auth0-js": "^9.3.0",
     "axios": "^0.17.1",
     "bootstrap": "^3.3.7",
     "element-ui": "^2.0.9",
