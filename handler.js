@@ -892,7 +892,7 @@ Ds4dOQYJqLYlmduaVdEotGWH1cPESzQhdG/Rj92dZT8MCCcQgWOmIWLdCZirxvT+
 XHpij2FyOMscbKxpJ0XorMUvdezkdhRWRX3FXKSlHThPYkzUWnxRkt+PSpUuVFA/
 mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
 0ZowFWWHPSGDAnPROw== \ 
------END CERTIFICATE-----`;
+-----END CERTIFICATE-----`
 
   userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] })
   user = (userInfo.email) ? userInfo.email : userInfo.name

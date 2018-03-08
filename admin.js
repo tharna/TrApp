@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const uuid = require('uuid');
-const AWS = require('aws-sdk'); 
-const jwt = require('jsonwebtoken');
+const uuid = require('uuid')
+const AWS = require('aws-sdk') 
+const jwt = require('jsonwebtoken')
 
-AWS.config.setPromisesDependency(require('bluebird'));
+AWS.config.setPromisesDependency(require('bluebird'))
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamoDb = new AWS.DynamoDB.DocumentClient()
 
 var user = ''
 var userInfo = {}
@@ -14,75 +14,75 @@ var userInfo = {}
 
 module.exports.listQuests = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
   var params = {
     TableName: process.env.QUEST_TABLE,
     ScanIndexForward: false
-  };
+  }
 
-  console.log("Scanning quest table.");
+  console.log('Scanning quest table.')
   const onScan = (err, data) => {
     if (err) {
-      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
-      callback(err);
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
     } else {
-      console.log("Scan succeeded.");
+      console.log('Scan succeeded.')
       return callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           quests: data.Items
         })
-      });
+      })
     }
-  };
-  dynamoDb.scan(params, onScan);
-};
+  }
+  dynamoDb.scan(params, onScan)
+}
 
 module.exports.addQuest = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
-  const requestBody = JSON.parse(event.body);
+  const requestBody = JSON.parse(event.body)
 
   submitQuest(questData(requestBody))
     .then(res => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully added new quest.',
         })
-      });
+      })
     })
     .catch(err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to submit quest`
+          message: 'Unable to submit quest'
         })
       })
-    });
+    })
 
-};
+}
 
 module.exports.updateQuest = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
-  const requestBody = JSON.parse(event.body);
+  const requestBody = JSON.parse(event.body)
 
   saveQuest(questData(requestBody))
     .then(res => {
@@ -91,94 +91,94 @@ module.exports.updateQuest = (event, context, callback) => {
         var params = {
           TableName: process.env.QUEST_TABLE,
           Key:{
-            "questID": requestBody.questID,
-            "groupID": requestBody.questGroupOld
+            'questID': requestBody.questID,
+            'groupID': requestBody.questGroupOld
           }
-        };
+        }
         dynamoDb.delete(params).promise()
           .then(res => {
           })
           .catch(err => {
-            console.log(err);
+            console.log(err)
             callback(null, {
               statusCode: 500,
               body: JSON.stringify({
-                message: `Unable to update quest`
+                message: 'Unable to update quest'
               })
             })
-          });
+          })
       }
 
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully updated quest.',
         })
-      });
+      })
     })
     .catch(err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to update quest`
+          message: 'Unable to update quest'
         })
       })
-    });
+    })
 
-};
+}
 module.exports.deleteQuest = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
-  const requestBody = JSON.parse(event.body);
+  const requestBody = JSON.parse(event.body)
   var params = {
     TableName: process.env.QUEST_TABLE,
     Key:{
-        "questID":requestBody.questID,
-        "groupID":requestBody.questGroup
+      'questID':requestBody.questID,
+      'groupID':requestBody.questGroup
     }
-  };
+  }
   dynamoDb.delete(params).promise()
     .then(res => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully deleted quest.',
         })
-      });
+      })
     }).catch(err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to delete quest`
+          message: 'Unable to delete quest'
         })
       })
-    });
-};
+    })
+}
 
 
 const submitQuest = quest => {
-  console.log('Submitting quest');
+  console.log('Submitting quest')
   const questInfo = {
     TableName: process.env.QUEST_TABLE,
     Item: quest,
-  };
+  }
   return dynamoDb.put(questInfo).promise()
-    .then(res => quest);
-};
+    .then(res => quest)
+}
 
 const saveQuest = quest => {
-  console.log('Updating quest');
+  console.log('Updating quest')
 
   const activity = {
     TableName: process.env.QUEST_TABLE,
@@ -186,7 +186,7 @@ const saveQuest = quest => {
       questID: quest.questID,
       groupID: quest.groupID
     },
-    ProjectionExpression: "activity"
+    ProjectionExpression: 'activity'
   }
 
   return dynamoDb.get(activity).promise()
@@ -197,28 +197,28 @@ const saveQuest = quest => {
       const questInfo = {
         TableName: process.env.QUEST_TABLE,
         Item: quest,
-      };
+      }
       dynamoDb.put(questInfo).promise()
-        .then(res => quest);
+        .then(res => quest)
     }).catch( err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to quest activity`
+          message: 'Unable to quest activity'
         })
       })
-  })
-};
+    })
+}
 
 
 const questData = (requestBody) => {
 
-  console.log(requestBody);        
- 
+  console.log(requestBody)        
+
   //if (typeof questname !== 'string' || typeof questtype !== 'string' || typeof amount !== 'number') {
-    //console.error('Validation Failed');
-    //return new Error('Couldn\'t submit quest data because of validation errors.');
+  //console.error('Validation Failed');
+  //return new Error('Couldn\'t submit quest data because of validation errors.');
   //}
 
 
@@ -240,175 +240,175 @@ const questData = (requestBody) => {
     questRepeat: requestBody.questRepeat,
     grandQuest: requestBody.grandQuest,
     activity: [{}]
-  };
-    //questActive: requestBody.questActive.substr(0, 10),
-    //questPublish: requestBody.questPublish.substr(0, 10)
-};
+  }
+  //questActive: requestBody.questActive.substr(0, 10),
+  //questPublish: requestBody.questPublish.substr(0, 10)
+}
 
 
 // ACHIEVEMENTS
 
 module.exports.listAchievements = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
   var params = {
     TableName: process.env.ACHIEVEMENT_TABLE,
     ScanIndexForward: false
-  };
+  }
 
-  console.log("Scanning achievement table.");
+  console.log('Scanning achievement table.')
   const onScan = (err, data) => {
     if (err) {
-      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2));
-      callback(err);
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
     } else {
-      console.log("Scan succeeded.");
+      console.log('Scan succeeded.')
       return callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           achievements: data.Items
         })
-      });
+      })
     }
-  };
-  dynamoDb.scan(params, onScan);
-};
+  }
+  dynamoDb.scan(params, onScan)
+}
 
 module.exports.addAchievement = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
-  const requestBody = JSON.parse(event.body);
+  const requestBody = JSON.parse(event.body)
 
   submitAchievement(achievementData(requestBody))
     .then(res => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully added new achievement.',
         })
-      });
+      })
     })
     .catch(err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to submit achievement`
+          message: 'Unable to submit achievement'
         })
       })
-    });
+    })
 
-};
+}
 
 module.exports.updateAchievement = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
-  const requestBody = JSON.parse(event.body);
+  const requestBody = JSON.parse(event.body)
 
   saveAchievement(achievementData(requestBody))
     .then(res => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully updated achievement.',
         })
-      });
+      })
     })
     .catch(err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to update achievement`
+          message: 'Unable to update achievement'
         })
       })
-    });
+    })
 
-};
+}
 
 module.exports.deleteAchievement = (event, context, callback) => {
   if(!setUserInfo(event)) {
-    console.error('Authentication Failed');
-    callback(new Error('You are unauthorized to perform this action.'));
-    return;
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
   }
-  const requestBody = JSON.parse(event.body);
+  const requestBody = JSON.parse(event.body)
   var params = {
     TableName: process.env.ACHIEVEMENT_TABLE,
     Key:{
-        "achievementID":requestBody.achievementID,
+      'achievementID':requestBody.achievementID,
     }
-  };
+  }
   dynamoDb.delete(params).promise()
     .then(res => {
       callback(null, {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*"
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
           message: 'Sucessfully deleted achievement.',
         })
-      });
+      })
     }).catch(err => {
-      console.log(err);
+      console.log(err)
       callback(null, {
         statusCode: 500,
         body: JSON.stringify({
-          message: `Unable to delete achievement`
+          message: 'Unable to delete achievement'
         })
       })
-    });
-};
+    })
+}
 
 const submitAchievement = achievement => {
-  console.log('Submitting achievement');
+  console.log('Submitting achievement')
   console.log(achievement)
   const achievementInfo = {
     TableName: process.env.ACHIEVEMENT_TABLE,
     Item: achievement,
-  };
+  }
   return dynamoDb.put(achievementInfo).promise()
-    .then(res => achievement);
-};
+    .then(res => achievement)
+}
 
 const saveAchievement = achievement => {
-  console.log('Updating achievement');
+  console.log('Updating achievement')
 
   const achievementInfo = {
     TableName: process.env.ACHIEVEMENT_TABLE,
     Item: achievement,
-  };
+  }
   return dynamoDb.put(achievementInfo).promise()
-    .then(res => achievement);
-};
+    .then(res => achievement)
+}
 
 
 const achievementData = (requestBody) => {
 
-  console.log(requestBody);        
- 
+  console.log(requestBody)        
+
   //if (typeof questname !== 'string' || typeof questtype !== 'string' || typeof amount !== 'number') {
-    //console.error('Validation Failed');
-    //return new Error('Couldn\'t submit quest data because of validation errors.');
+  //console.error('Validation Failed');
+  //return new Error('Couldn\'t submit quest data because of validation errors.');
   //}
 
 
@@ -431,8 +431,8 @@ const achievementData = (requestBody) => {
     achievementActive: requestBody.achievementActive,
     achievementActiveEnd: requestBody.achievementActiveEnd,
     achievementPublish: requestBody.achievementPublish
-  };
-};
+  }
+}
 
 
 
@@ -455,11 +455,11 @@ Ds4dOQYJqLYlmduaVdEotGWH1cPESzQhdG/Rj92dZT8MCCcQgWOmIWLdCZirxvT+
 XHpij2FyOMscbKxpJ0XorMUvdezkdhRWRX3FXKSlHThPYkzUWnxRkt+PSpUuVFA/
 mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
 0ZowFWWHPSGDAnPROw== \ 
------END CERTIFICATE-----`;
+-----END CERTIFICATE-----`
 
-  userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] });
-  user = userInfo.email;
+  userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] })
+  user = userInfo.email
 
-  var auth = (userInfo["https://app.aikojentanssi.fi/group"] == 99);
-  return auth;
+  var auth = (userInfo['https://app.aikojentanssi.fi/group'] == 99)
+  return auth
 }
