@@ -200,7 +200,9 @@
         :title="currentQuest.name"
         :visible.sync="showQuestActivityVisible"
         width="80%">
+      <h2>Tehtävän kuvaus</h2>
       <div v-html="currentQuest.questDesc"></div>
+      <h2>Tarina</h2>
       <div v-html="currentQuest.questStory"></div>
       <div v-if="currentQuest.status == 'success'" v-html="currentQuest.questSuccess"></div>
         <div v-if="currentQuest.status == 'failure'" v-html="currentQuest.questFailure"></div>
