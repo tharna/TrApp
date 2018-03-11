@@ -7,6 +7,9 @@ parserOptions:
 rules:
   no-console: off
   no-unused-vars: off
+  no-undef: off
+  no-cond-assign: off
+  no-useless-escape: off
   indent:
     - error
     - 2

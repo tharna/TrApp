@@ -30,6 +30,27 @@ module.exports.listQuests = (event, context, callback) => {
       callback(err)
     } else {
       console.log('Scan succeeded.')
+      data.Items.forEach((quest, index) => {
+        var members = 1
+        var repeats = 1
+        if(quest.questScope == 1) {
+          members = memberCount(quest.groupID)
+        } 
+
+        if(quest.questRepeat == 2) {
+          repeats = quest.questDays
+        }
+        var total = quest.amount * members * repeats
+        var progress = quest.activity.reduce(function (total, value) {
+          if (!isNaN(parseFloat(value.amount)) && isFinite(value.amount)) {
+            return total + parseInt(value.amount)
+          } else {
+            return total
+          }
+        }, 0)
+        data.Items[index].progress = Math.round(progress / total * 100)
+      })
+
       return callback(null, {
         statusCode: 200,
         headers: {
@@ -462,4 +483,42 @@ mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
 
   var auth = (userInfo['https://app.aikojentanssi.fi/group'] == 99)
   return auth
+}
+const memberCount = (groupID) => {
+  const groups = [{
+    value: 'Kekäle',
+    members: 5 
+  }, {
+    value: 'Kvantti',
+    members: 3
+  }, {
+    value: 'Loharit',
+    members: 9
+  }, {
+    value: 'Lopparit',
+    members: 9
+  }, {
+    value: 'Manse',
+    members: 7
+  }, {
+    value: 'Pöllöt',
+    members: 4 
+  }, {
+    value: 'Tammi',
+    members: 6
+  }, {
+    value: 'Karhut',
+    members: 5
+  }, {
+    value: 'Iku',
+    members: 5
+  }, {
+    value: 'Mekanistit',
+    members: 8
+  }, {
+    value: 'Yhteinen',
+    members: 61
+  }
+  ] 
+  return groups.find(group => { return group.value === groupID }).members 
 }

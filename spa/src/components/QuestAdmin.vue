@@ -13,14 +13,17 @@
       <hr>
       <el-row>
       <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="quest in quests">
-          <div class="card" v-show="questFilter == quest.groupID || questFilter == 'Kaikki'">
+          <div class="card" v-show="questFilter == quest.groupID || questFilter == 'Kaikki'">
             <div class="card-divider">
               {{ quest.name }} | {{ quest.groupID }}
+              <br>{{ quest.questActive | date }}
             </div>
             <div class="card-section">
-              <p>{{ quest.questActive | date }}</p>
+              <el-progress :percentage="quest.progress" :stroke-width="16"></el-progress>
+              <div class="bottom clearfix" style="margin-top: 10px;">
               <el-button type="primary" round @click="editQuest(quest.questID)">Muokkaa</el-button> 
               <el-button type="primary" round @click="showQuest(quest.questID)">Näytä</el-button> 
+              </div>
             </div>
           </div>
       </el-col>
@@ -481,3 +484,8 @@ export default {
 
 }
 </script>
+<style>
+.el-progress__text {
+  margin-left: 8px;
+}
+</style>
