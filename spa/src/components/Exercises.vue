@@ -31,11 +31,20 @@
             </div>
             <div class="card-section">
               <span>{{ exercise.date | date }}</span>
-              <dyn-popover style="display: inline-block; float: right;" v-if="exercise.note && exercise.note != ' '" :index="index" :content="exercise.note"></dyn-popover>
+              <dyn-popover style="display: inline-block;" v-if="exercise.note && exercise.note != ' '" :index="index" :content="exercise.note"></dyn-popover>
+              <span style="float: right;"><i class="el-icon-delete" @click.prevent="deleteConfirm(index)"></i></span>
             </div>
           </div>
       </el-col>
     </el-row>
+    <el-dialog     
+       title="Poista treeni?"
+       :visible.sync="deleteConfirmVisible">
+          <el-button @click.native="deleteConfirmVisible = false" round>Ei</el-button>
+          <el-button type="primary" :loading="loading" round @click.prevent="deleteExercise()">Kyllä</el-button>
+    </el-dialog>
+
+
   </div>
 </template>
 <script>
@@ -52,7 +61,10 @@ export default {
       exercises: [
       ],
       type: 'Kaikki',
-      loaded: false
+      loaded: false,
+      loading: false,
+      deleteConfirmVisible: false,
+      currentIndex: 0
     }
   },
   components: {
@@ -62,6 +74,35 @@ export default {
     getExercises: function () {
       axios.get('/data')
         .then(response => { this.exercises = response.data.exercises })
+    },
+    deleteConfirm: function (index) {
+      this.deleteConfirmVisible = true
+      this.currentIndex = index
+    },
+    deleteExercise: function () {
+      this.loading = true
+      axios.post('/data/delete', {
+        amount: this.exercises[this.currentIndex].amount,
+        date: this.exercises[this.currentIndex].date,
+        exercisename: this.exercises[this.currentIndex].exercisename
+      }).then(reponse => {
+        this.loading = false
+        this.deleteConfirmVisible = false
+        this.exercises.splice(this.currentIndex, 1)
+        this.$notify({
+          title: 'Success',
+          message: 'Treeni poistettu',
+          type: 'success'
+        })
+      }).catch(err => {
+        console.log(err)
+        this.loading = false
+        this.$notify({
+          title: 'Virhe',
+          message: 'Treenin poistaminen ei onnistunut',
+          type: 'error'
+        })
+      })
     }
   },
   filters: {

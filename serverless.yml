@@ -48,6 +48,14 @@ functions:
           path: data
           method: post
           cors: true
+  delExercise:
+    memorySize: 128
+    handler: handler.delete
+    events:
+      - http:
+          path: data/delete
+          method: post
+          cors: true
   getActivity:
     memorySize: 128
     handler: handler.getActivity

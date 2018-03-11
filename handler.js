@@ -94,6 +94,42 @@ module.exports.get = (event, context, callback) => {
   dynamoDb.query(params, onScan)
 
 }
+module.exports.delete = (event, context, callback) => {
+  setUserInfo(event) 
+  const requestBody = JSON.parse(event.body)
+  var params = {
+    TableName: process.env.EXERCISE_TABLE,
+    Key:{
+      'userID': user,
+      'date': requestBody.date
+    }
+  }
+  dynamoDb.delete(params).promise()
+    .then(res => {
+      updateActivity(-Math.abs(requestBody.amount), requestBody.date)
+      updateLevels(-Math.abs(requestBody.amount), requestBody.exercisename)
+      // TODO decrease activity
+      // TODO decrease level
+      callback(null, {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          message: 'Sucessfully deleted exercise.',
+        })
+      })
+    }).catch(err => {
+      console.log(err)
+      callback(null, {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: 'Unable to delete exercise'
+        })
+      })
+    })
+}
+
 /*
 module.exports.getByType = (event, context, callback) => {
   const params = {
@@ -321,10 +357,12 @@ module.exports.getQuests = (event, context, callback) => {
             grandQuest: quest.grandQuest
           }
           var untilDate = new Date(quest.questActive)
-          var offset = (quest.grandQuest) ? 90 : 6
+          var untilDateDisplay = new Date(quest.questActive)
+          var offset = (quest.grandQuest) ? 90 : 7
           untilDate.setDate(untilDate.getDate() + offset)
+          untilDateDisplay.setDate(untilDateDisplay.getDate() + (offset - 1))
           questObj.startDate = quest.questActive
-          questObj.endDate = untilDate.toISOString( )
+          questObj.endDate = untilDateDisplay.toISOString()
           if( quest.questActive <= date) {
             questObj.questStory = quest.questStory
             if(date <= untilDate.toISOString()) {
@@ -349,9 +387,8 @@ module.exports.getQuests = (event, context, callback) => {
             }
           }, 0)
           questObj.progress = Math.round(progress / total * 100)
-          if ( date >= untilDate.toISOString( )) {
-            if ( questObj.progress >= 100) {
-              questObj.progress = 100
+          if (date >= untilDate.toISOString( )) {
+            if (questObj.progress >= 100) {
               questObj.questSuccess = quest.questSuccess
               questObj.status = 'success'
             } else {
@@ -498,9 +535,9 @@ module.exports.getAchievements = (event, context, callback) => {
                 var next = achievementObj.achievementLVL1amount
                 if ( achievement.type == 3) {
                   achievementObj.bestStreak = userAchievement.streak
-                  achievementObj.activity = userAchievement.streak
+                  achievementObj.activity = userAchievement.activity
                 }
-                var next = achievement.achievementLVL1amount
+                next = achievement.achievementLVL1amount
                 if ( achievementObj.activity >= achievement.achievementLVL1amount) {
                   achievementObj.level++
                   next = achievement.achievementLVL2amount
@@ -656,7 +693,7 @@ const achievementData = (requestBody, achievement) => {
   if (achievement.Item) {
     if (requestBody.achievementType == 3) {
       streak = achievement.Item.streak
-      if (achievement.Item.date != date && achievement.Item.date > date2) {
+      if (achievement.Item.date != date && achievement.Item.date >= date2) {
         activity = achievement.Item.activity + 1
         if (activity > achievement.Item.streak) {
           streak = activity
