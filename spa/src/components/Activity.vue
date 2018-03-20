@@ -14,7 +14,7 @@
         <el-radio v-model="period" @change="getActivity" label="Treenijakso">Treenijakso</el-radio>
         <trend
         :data="activity"
-        :gradient="['#ff0000', '#ff5d00', '#ffff00', '#bfff00', '#80ff00', '#40ff00', '#00ff00']"
+        :gradient="['#ff9900', '#ffff00', '#bfff00', '#80ff00', '#40ff00', '#00ff00']"
         :stroke-width="2"
         auto-draw
         smooth>

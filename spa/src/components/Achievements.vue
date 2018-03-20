@@ -6,7 +6,7 @@
           <el-progress type="circle" :percentage="achievement.progress" :status="achievement.status" :width="75"></el-progress>
         </div>
       </el-col>
-      <el-col :lg="16" :xs="20" :sm="20">
+      <el-col :lg="16" :md="16" :xs="20" :sm="14" :span="20">
         <div><h4 style="display: inline-block;">{{ achievement.name }}</h4>
 
               <el-rate
@@ -18,12 +18,12 @@
           <br>
           {{ achievement.achievementDesc }}</div>
       </el-col>
-      <el-col :lg="4" :xs="24" :sm="24"  style="text-align: center;">
+      <el-col :lg="4" :md="4" :xs="24" :sm="6"  style="text-align: center;padding-bottom: 10px;">
         <el-button round @click="showAchievementActivity(achievement.achievementID)">Näytä tiedot</el-button>
         <el-button v-if="achievement.isActive" type="primary" round @click="addAchievementActivity(achievement.achievementID)">Lisää suoritus</el-button>
       </el-col>
+      <hr>
     </el-row>
-        <hr>
 
     <el-dialog
         title="Lisää suoritus"
