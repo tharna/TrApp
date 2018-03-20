@@ -518,6 +518,9 @@ const memberCount = (groupID) => {
   }, {
     value: 'Yhteinen',
     members: 61
+  }, {
+    value: 'NPC',
+    members: 10
   }
   ] 
   return groups.find(group => { return group.value === groupID }).members 

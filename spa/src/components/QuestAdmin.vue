@@ -286,6 +286,9 @@ export default {
       }, {
         value: 'Yhteinen',
         label: 'Yhteinen'
+      }, {
+        value: 'NPC',
+        label: 'NPC'
       }],
       groups: [{
         value: 'Kekäle',
@@ -320,6 +323,9 @@ export default {
       }, {
         value: 'Yhteinen',
         label: 'Yhteinen'
+      }, {
+        value: 'NPC',
+        label: 'NPC'
       }],
       EquestName: ' ',
       EquestType: ' ',
