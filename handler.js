@@ -564,18 +564,8 @@ module.exports.getAchievements = (event, context, callback) => {
                 }
                 achievementObj.progress = Math.round(achievementObj.activity / next * 100)
               }
-
-              console.log( achievement)
-              console.log( userAchievement)
             }
-            //  TODO calculate level
-            //  TODO assign currentLevelDesc
-            //  TODO calculate progress
-            //  TODO if type == 3 calculate currentStreak and bestStreak
-            //  TODO if type == 2 calculate total
 
-            // TODO: Check personal status      
-            // TODO: progress and level completion
             achievements.push(achievementObj)
 
           } 
@@ -587,7 +577,10 @@ module.exports.getAchievements = (event, context, callback) => {
             'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
-            achievements: achievements
+            achievements: achievements.sort(function( a,b) {
+              return a.activity < b.activity
+
+            })
           })
         })
       })
