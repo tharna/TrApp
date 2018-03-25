@@ -531,6 +531,24 @@ module.exports.getAchievements = (event, context, callback) => {
 
               if ( achievement.type == 1) {
                 achievementObj.level = userAchievement.activity
+                switch ( achievementObj.level) {
+                  case 1:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL2
+                    break
+                  case 2:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL3
+                    break
+                  case 3:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL4
+                    break
+                  case 4:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL5
+                    break
+                  case 5:
+                  achievementObj.currentLevelDesc = "Maksimitaso saavutettu"
+                    break
+
+                }
               } else {
                 var next = achievementObj.achievementLVL1amount
                 if ( achievement.type == 3) {
@@ -538,31 +556,31 @@ module.exports.getAchievements = (event, context, callback) => {
                   achievementObj.activity = userAchievement.activity
                 }
                 next = achievement.achievementLVL1amount
-                if ( achievementObj.activity >= achievement.achievementLVL1amount) {
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL1amount)) {
                   achievementObj.level++
                   next = achievement.achievementLVL2amount
                   achievementObj.currentLevelDesc = achievement.achievementLVL2
                 }
-                if ( achievementObj.activity >= achievement.achievementLVL2amount) {
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL2amount)) {
                   achievementObj.level++
                   next = achievement.achievementLVL3amount
                   achievementObj.currentLevelDesc = achievement.achievementLVL3
                 }
-                if ( achievementObj.activity >= achievement.achievementLVL3amount) {
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL3amount)) {
                   achievementObj.level++
                   next = achievement.achievementLVL4amount
                   achievementObj.currentLevelDesc = achievement.achievementLVL4
                 }
-                if ( achievementObj.activity >= achievement.achievementLVL4amount) {
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL4amount)) {
                   achievementObj.level++
                   next = achievement.achievementLVL5amount
                   achievementObj.currentLevelDesc = achievement.achievementLVL5
                 }
-                if ( achievementObj.activity >= achievement.achievementLVL5amount) {
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL5amount)) {
                   achievementObj.level++
                   next = achievementObj.activity
                 }
-                achievementObj.progress = Math.round(achievementObj.activity / next * 100)
+                achievementObj.progress = Math.round(achievementObj.activity / parseInt(next) * 100)
               }
             }
 
@@ -578,7 +596,10 @@ module.exports.getAchievements = (event, context, callback) => {
           },
           body: JSON.stringify({
             achievements: achievements.sort(function( a,b) {
-              return a.activity < b.activity
+              if (typeof(a.activity) !== 'undefined') return 1
+              if (typeof(b.activity) !== 'undefined') return -1
+              if (a.activity < b.activity) return 1
+              if (a.activity > b.activity) return -1
 
             })
           })
