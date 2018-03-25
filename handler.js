@@ -596,10 +596,10 @@ module.exports.getAchievements = (event, context, callback) => {
           },
           body: JSON.stringify({
             achievements: achievements.sort(function( a,b) {
-              if (typeof(a.activity) !== 'undefined') return 1
-              if (typeof(b.activity) !== 'undefined') return -1
-              if (a.activity < b.activity) return 1
-              if (a.activity > b.activity) return -1
+              if (typeof(a.activity) !== 'undefined') return -1
+              if (typeof(b.activity) !== 'undefined') return 1
+              if (a.activity < b.activity) return -1
+              if (a.activity > b.activity) return 1
 
             })
           })
@@ -803,13 +803,15 @@ const updateLevels = (amount, exercisename) => {
     Key: {
       userID: user,
     },
-    UpdateExpression: 'SET #level.#element = #level.#element + :amount',
+    UpdateExpression: 'SET #level.#element = #level.#element + :amount, #group = :group',
     ExpressionAttributeNames: {
       '#level': 'level',
       '#element': element,
+      '#group': 'group',
     },
     ExpressionAttributeValues: {
       ':amount': amount,
+      ':group': userInfo['https://app.aikojentanssi.fi/group']
     },
     ReturnValues:'UPDATED_NEW',
   }

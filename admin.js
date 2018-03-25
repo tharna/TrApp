@@ -455,6 +455,51 @@ const achievementData = (requestBody) => {
   }
 }
 
+module.exports.getUserActivity = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
+  }
+  var params = {
+    TableName: process.env.USER_TABLE,
+    ScanIndexForward: false
+  }
+
+  console.log('Scanning activity table.')
+  const onScan = (err, data) => {
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
+    } else {
+      console.log('Scan succeeded.')
+      /*var users = {}
+      data.Items.forEach((activity, index) => {
+        users[activity.userID] = ( typeof(users[activity.userID]) !== 'undefined') ? users[activity.userID] + activity.total : activity.total
+      })
+      console.log( users)
+      var userData = new Array( )
+      Object.keys(users).forEach((item, index) => {
+        userData.push({ user: item, total: users[item]})
+      })
+      */
+      data.Items.forEach((user, index) => {
+        user.total = user.level.air + user.level.earth + user.level.fire + user.level.water
+      })
+      return callback(null, {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        body: JSON.stringify({
+          users: data.Items
+        })
+      })
+    }
+  }
+  dynamoDb.scan(params, onScan)
+}
+
 
 
 const setUserInfo = event => {
