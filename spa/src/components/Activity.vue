@@ -82,6 +82,7 @@ export default {
         { id: '4', category_id: '1', name: 'Megazone', selected: false },
         { id: '5', category_id: '1', name: 'Ammunta', selected: false },
         { id: '6', category_id: '1', name: 'Boffaus', selected: false },
+        { id: '31', category_id: '1', name: 'Kehopainotreeni', selected: false },
         { id: '100', category_id: '1', name: 'Muu lihaskunto', selected: false },
         { id: '7', category_id: '2', name: 'Pyöräily', selected: true },
         { id: '8', category_id: '2', name: 'Uinti', selected: false },

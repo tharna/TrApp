@@ -7,6 +7,9 @@
           <el-tab-pane label="Urotyöt" name="second">
               <Achievements></Achievements>
           </el-tab-pane>
+          <el-tab-pane label="Pelaajat" name="third">
+              <Users></Users>
+          </el-tab-pane>
           <el-tab-pane label="Tili" name="logout">
 
           <el-button
@@ -26,6 +29,7 @@
 <script>
 import Quests from './QuestAdmin.vue'
 import Achievements from './AchievementAdmin.vue'
+import Users from './UserAdmin.vue'
 import router from '../router'
 export default {
   name: 'home',
@@ -38,7 +42,8 @@ export default {
   },
   components: {
     Quests,
-    Achievements
+    Achievements,
+    Users
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))
