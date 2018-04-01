@@ -322,7 +322,7 @@ module.exports.getQuests = (event, context, callback) => {
   var params = {
     TableName: process.env.QUEST_TABLE,
     ScanIndexForward: false,
-    ProjectionExpression: 'questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity,grandQuest',
+    ProjectionExpression: 'questID, groupID, amount, #name, questActive, questDays, questDesc, questFailure, questMeasure, questPublish, questRepeat, questScope, questStory, questSuccess, #type, activity, grandQuest',
     ExpressionAttributeNames: {
       '#name': 'name',
       '#type': 'type'
@@ -354,7 +354,8 @@ module.exports.getQuests = (event, context, callback) => {
             questFailure: '',
             questDesc: quest.questDesc,
             questStory: '',
-            grandQuest: quest.grandQuest
+            grandQuest: quest.grandQuest,
+            questActivity: 0
           }
           var untilDate = new Date(quest.questActive)
           var untilDateDisplay = new Date(quest.questActive)
@@ -369,6 +370,11 @@ module.exports.getQuests = (event, context, callback) => {
               questObj.isActive = true
             }
           }
+          quest.activity.forEach((userActivity, i) => {
+            if( userActivity.user === user) {
+              questObj.questActivity += userActivity.amount
+            }
+          })
           var members = 1
           var repeats = 1
           if(quest.questScope == 1) {
@@ -386,6 +392,8 @@ module.exports.getQuests = (event, context, callback) => {
               return total
             }
           }, 0)
+          questObj.total = total
+          questObj.progressAmount = progress
           questObj.progress = Math.round(progress / total * 100)
           if (date >= untilDate.toISOString( )) {
             if (questObj.progress >= 100) {
@@ -519,7 +527,8 @@ module.exports.getAchievements = (event, context, callback) => {
               lvl5Desc: achievement.achievementLVL5,
               currentLevelDesc: achievement.achievementLVL1,
               level: 0,
-              progress: 0
+              progress: 0,
+              today: 0
             }
 
             if( achievement.achievementActive <= date && date <= achievement.achievementActiveEnd) {
@@ -554,6 +563,9 @@ module.exports.getAchievements = (event, context, callback) => {
                 if ( achievement.type == 3) {
                   achievementObj.bestStreak = userAchievement.streak
                   achievementObj.activity = userAchievement.activity
+                  if ( userAchievement.date == date.substr( 0, 10)) {
+                    achievementObj.today = 1
+                  }
                 }
                 next = achievement.achievementLVL1amount
                 if ( achievementObj.activity >= parseInt(achievement.achievementLVL1amount)) {

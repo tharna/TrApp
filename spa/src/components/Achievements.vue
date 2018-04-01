@@ -33,11 +33,12 @@
           {{ currentAchievement.currentLevelDesc }}
           <span v-if="currentAchievement.achievementType==3">
             <br>Pisin putki: {{ currentAchievement.bestStreak }}<br>
-          Tämänhetkinen putki: {{ currentAchievement.activity }}
+            Tämänhetkinen putki: {{ currentAchievement.activity }}<br>
+            Suoritettu tänään: {{ currentAchievement.today | completed }}
           </span>
         <span v-if="currentAchievement.achievementType==1 || currentAchievement.achievementType==3">
           <br>Tehtävä suoritettu <span v-if="currentAchievement.achievementType==3">tänään</span>:<br>
-          <el-button @click.native="addAchievementActivity = false" round>Ei</el-button>
+          <el-button @click.native="addAchievementVisible = false" round>Ei</el-button>
           <el-button type="primary" :loading="loading" round @click.prevent="postAchievement(currentAchievement.achievementID)">Kyllä</el-button>
         </span>
         <span v-if="currentAchievement.achievementType==2">
@@ -139,6 +140,11 @@ export default {
     showAchievementActivity: function (achievementID) {
       this.currentAchievement = this.achievements.find(achievement => { return achievement.achievementID === achievementID })
       this.showAchievementVisible = true
+    }
+  },
+  filters: {
+    completed: function (value) {
+      return (value === 1) ? 'Kyllä' : 'Ei'
     }
   },
   watch: {

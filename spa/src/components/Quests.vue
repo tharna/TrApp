@@ -22,6 +22,8 @@
         :visible.sync="addQuestActivityVisible"
         width="80%">
       <div v-html="currentQuest.questDesc"></div><br>
+      <div>Oma suoritus yhteensä: {{ currentQuest.questActivity }}</div>
+      <div>Suoritukset yhteensä: {{ currentQuest.progressAmount }} / {{currentQuest.total }}</div>
         <span v-if="currentQuest.type==1">
           Tehtävä suoritettu:<br>
           <el-button @click.native="addQuestActivityVisible = false" round>Ei</el-button>
