@@ -17,6 +17,27 @@
       sortable>
     </el-table-column>
     <el-table-column
+      prop="level.air"
+      label="Ilma"
+      sortable>
+    </el-table-column>
+    <el-table-column
+      prop="level.earth"
+      label="Maa"
+      sortable>
+    </el-table-column>
+    <el-table-column
+      prop="level.fire"
+      label="Tuli"
+      sortable>
+    </el-table-column>
+    <el-table-column
+      prop="level.water"
+      label="Vesi"
+      sortable>
+    </el-table-column>
+
+    <el-table-column
       prop="total"
       label="Aktiivisuus"
       sortable>
