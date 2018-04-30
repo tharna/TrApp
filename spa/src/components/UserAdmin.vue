@@ -19,21 +19,25 @@
     <el-table-column
       prop="level.air"
       label="Ilma"
+      :formatter="level"
       sortable>
     </el-table-column>
     <el-table-column
       prop="level.earth"
       label="Maa"
+      :formatter="level"
       sortable>
     </el-table-column>
     <el-table-column
       prop="level.fire"
       label="Tuli"
+      :formatter="level"
       sortable>
     </el-table-column>
     <el-table-column
       prop="level.water"
       label="Vesi"
+      :formatter="level"
       sortable>
     </el-table-column>
 
@@ -62,6 +66,17 @@ export default {
     },
     filterGroup: function (value, row) {
       return row.group === value
+    },
+    level: function (row, column, value, index) {
+      var sum = 0
+      var level = 0
+      const levelMultiplier = 8
+      while (sum <= value) {
+        level++
+        value = value - sum
+        sum = level * levelMultiplier
+      }
+      return level - 1
     }
   },
   created () {
