@@ -1,35 +1,47 @@
 <template>
   <div>
-        <div style="text-align: center;">
-          <el-button type="primary" @click="addQuestVisible = true" round>Lisää viikkotehtävä</el-button>
-            Näytä: <el-select v-model="questFilter" placeholder="Heimo">
-              <el-option
-                  v-for="item in groupFilter"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-            </el-select></div>
-      <hr>
-      <el-row>
-      <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="quest in quests">
-          <div class="card" v-show="questFilter == quest.groupID || questFilter == 'Kaikki'">
-            <div class="card-divider">
-              {{ quest.name }} | {{ quest.groupID }}
-              <br>{{ quest.questActive | date }}
-            </div>
-            <div class="card-section">
-              <el-progress :percentage="quest.progress" :stroke-width="16"></el-progress>
-              <div class="bottom clearfix" style="margin-top: 10px;">
-              <el-button type="primary" round @click="editQuest(quest.questID)">Muokkaa</el-button> 
-              <el-button type="primary" round @click="showQuest(quest.questID)">Näytä</el-button> 
-              </div>
-            </div>
-          </div>
-      </el-col>
-    </el-row>
-    <el-row>
-    </el-row>
+    <div style="text-align: center;">
+      <el-button type="primary" @click="addQuestVisible = true" round>Lisää viikkotehtävä</el-button>
+    </div>
+    <hr>
+  <el-table
+    :data="quests"
+    :default-sort = "{prop: 'questActive', order: 'descending'}"
+    style="width: 100%">
+    <el-table-column
+      prop="name"
+      label="Tehtävä"
+      sortable>
+    </el-table-column>
+    <el-table-column
+      prop="groupID"
+      label="Heimo"
+      width=120
+      :filter-method="filterGroup"
+      :filters="[{ text: 'Yhteinen', value: 'Yhteinen'}, { text: 'Kekäle', value: 'Kekäle' }, { text: 'Kvantti', value: 'Kvantti' }, { text: 'Loharit', value: 'Loharit' }, { text: 'Lopparit', value: 'Lopparit' }, { text: 'Manse', value: 'Manse' }, { text: 'Pöllöt', value: 'Pöllöt' }, { text: 'Tammi', value: 'Tammi' }, { text: 'Karhut', value: 'Karhut' }, { text: 'Iku', value: 'Iku' }, { text: 'Mekanistit', value: 'Mekanistit' }, { text: 'NPC', value: 'NPC' }, { text: 'PJ', value: 99}]"
+      filter-placement="bottom-end"
+      sortable>
+    </el-table-column>
+    <el-table-column
+      prop="questActive"
+      label="Aloituspäivä"
+      :formatter="formatDate"
+      width=140
+      sortable>
+    </el-table-column>
+    <el-table-column width=200>
+      <template slot-scope="scope">
+            <el-progress :percentage="quests[scope.$index].progress" :stroke-width="16"></el-progress>
+      </template>
+    </el-table-column>
+    <el-table-column>
+      <template slot-scope="scope">
+        <el-button type="primary" round @click="editQuest(quests[scope.$index].questID)">Muokkaa</el-button> 
+        <el-button type="primary" round @click="showQuest(quests[scope.$index].questID)">Näytä</el-button> 
+      </template>
+    </el-table-column>
+  </el-table>
+
     <el-dialog
         title="Lisää viikkotehtävä"
         :visible.sync="addQuestVisible"
@@ -479,6 +491,12 @@ export default {
     showQuest: function (questID) {
       this.currentQuest = this.quests.find(quest => { return quest.questID === questID })
       this.showQuestActivityVisible = true
+    },
+    filterGroup: function (value, row) {
+      return row.groupID === value
+    },
+    formatDate: function (row, column, value, index) {
+      return moment(String(value)).format('DD.MM.YYYY')
     }
   },
   filters: {

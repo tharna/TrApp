@@ -4,24 +4,30 @@
           <el-button type="primary" @click="addAchievementVisible = true" round>Lisää urotyö</el-button>
           </div>
       <hr>
-      <el-row>
-      <el-col :span="24">
-        <div class="columns medium-3" v-for="achievement in achievements">
-          <div class="card">
-            <div class="card-divider">
-              {{ achievement.name }}
-            </div>
-            <div class="card-section">
-              <p>{{ achievement.achievementActive | date }}</p>
-              <el-button type="primary" round @click="editAchievement(achievement.achievementID)">Muokkaa</el-button> 
-              <el-button type="primary" round @click="showAchievement(achievement.achievementID)">Suoritukset</el-button> 
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row>
-    </el-row>
+  <el-table
+    :data="achievements"
+    :default-sort = "{prop: 'questActive', order: 'descending'}"
+    style="width: 100%">
+    <el-table-column
+      prop="name"
+      label="Tehtävä"
+      sortable>
+    </el-table-column>
+   <el-table-column
+      prop="achievementActive"
+      label="Aloituspäivä"
+      :formatter="formatDate"
+      width=140
+      sortable>
+    </el-table-column>
+    <el-table-column>
+      <template slot-scope="scope">
+        <el-button type="primary" round @click="editAchievement(achievements[scope.$index].achievementID)">Muokkaa</el-button> 
+        <el-button type="primary" round @click="showAchievement(achievements[scope.$index].achievementID)">Suoritukset</el-button> 
+      </template>
+    </el-table-column>
+  </el-table>
+
     <el-dialog
         title="Lisää urotyö"
         :visible.sync="addAchievementVisible"
@@ -432,6 +438,9 @@ export default {
     },
     showAchievement: function (achievementID, event) {
       this.loading = true
+    },
+    formatDate: function (row, column, value, index) {
+      return moment(String(value)).format('DD.MM.YYYY')
     }
   },
   filters: {
