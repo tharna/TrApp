@@ -31,13 +31,13 @@
     </el-table-column>
     <el-table-column width=200>
       <template slot-scope="scope">
-            <el-progress :percentage="quests[scope.$index].progress" :stroke-width="16"></el-progress>
+            <el-progress :percentage="scope.row.progress" :stroke-width="16"></el-progress>
       </template>
     </el-table-column>
     <el-table-column>
       <template slot-scope="scope">
-        <el-button type="primary" round @click="editQuest(quests[scope.$index].questID)">Muokkaa</el-button> 
-        <el-button type="primary" round @click="showQuest(quests[scope.$index].questID)">Näytä</el-button> 
+        <el-button type="primary" round @click="editQuest(scope.row.questID)">Muokkaa</el-button> 
+        <el-button type="primary" round @click="showQuest(scope.row.questID)">Näytä</el-button> 
       </template>
     </el-table-column>
   </el-table>

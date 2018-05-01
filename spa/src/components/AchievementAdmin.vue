@@ -22,8 +22,8 @@
     </el-table-column>
     <el-table-column>
       <template slot-scope="scope">
-        <el-button type="primary" round @click="editAchievement(achievements[scope.$index].achievementID)">Muokkaa</el-button> 
-        <el-button type="primary" round @click="showAchievement(achievements[scope.$index].achievementID)">Suoritukset</el-button> 
+        <el-button type="primary" round @click="editAchievement(scope.row.achievementID)">Muokkaa</el-button> 
+        <el-button type="primary" round @click="showAchievement(scope.row.achievementID)">Suoritukset</el-button> 
       </template>
     </el-table-column>
   </el-table>
