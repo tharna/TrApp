@@ -1,4 +1,5 @@
 <template>
+  <div>
 <el-table
     :data="users"
     :default-sort = "{prop: 'total', order: 'descending'}"
@@ -46,7 +47,35 @@
       label="Aktiivisuus"
       sortable>
     </el-table-column>
+    <el-table-column>
+      <template slot-scope="scope">
+        <el-button type="primary" round @click="getUserAchievements(scope.row.userID)">Urotyöt</el-button> 
+      </template>
+    </el-table-column>
   </el-table>
+   <el-dialog
+       title="Pelaajan suorittamat urotyöt"
+       :visible.sync="showUserAchievementsVisible"
+       width="80%">
+     <el-table
+       :data="userAchievements"
+       style="width: 100%">
+       <el-table-column
+       prop="name"
+       label="Urotyö"
+       sortable>
+       </el-table-column>
+       <el-table-column
+       prop="level"
+       label="Taso"
+       sortable>
+       </el-table-column>
+     </el-table> 
+         <el-button @click.native="showUserAchievementsVisible = false" round>Sulje</el-button>
+   </el-dialog>
+   </div>
+
+
 </template>
 <script>
 import Vue from 'vue'
@@ -56,13 +85,23 @@ export default {
   data () {
     return {
       users: [
-      ]
+      ],
+      userAchievements: [
+      ],
+      showUserAchievementsVisible: false
     }
   },
   methods: {
     getUsers: function () {
       axios.get('/admin/user')
         .then(response => { this.users = response.data.users })
+    },
+    getUserAchievements: function (userID) {
+      axios.get('/admin/user/achievement/' + userID)
+        .then(response => {
+          this.userAchievements = response.data.achievements
+          this.showUserAchievementsVisible = true
+        })
     },
     filterGroup: function (value, row) {
       return row.group === value

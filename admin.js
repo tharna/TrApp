@@ -400,6 +400,264 @@ module.exports.deleteAchievement = (event, context, callback) => {
     })
 }
 
+module.exports.getAchievementActivity = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
+  }
+ 
+  var achievementID = event.pathParameters.achievementID
+  var params = {
+    TableName: process.env.ACHIEVEMENT_ACTIVITY_TABLE,
+    FilterExpression: 'achievementID = :achievementID',
+    ExpressionAttributeValues: {
+      ':achievementID': achievementID,
+    },
+  }
+
+  const onScan = (err, data) => {
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
+    } else {
+      console.log('Scan succeeded.')
+      console.log(data)
+      getAchievement(achievementID).then(res => {
+/*        var achievements = new Array()
+        data.Items.forEach((activity, index) => {
+
+            if (userAchievement = res.Items.find(item => { return item.achievementID === achievementObj.achievementID })) {
+              achievementObj.activity = userAchievement.activity
+
+              if ( achievement.type == 1) {
+                achievementObj.level = userAchievement.activity
+                switch ( achievementObj.level) {
+                  case 1:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL2
+                    break
+                  case 2:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL3
+                    break
+                  case 3:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL4
+                    break
+                  case 4:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL5
+                    break
+                  case 5:
+                  achievementObj.currentLevelDesc = "Maksimitaso saavutettu"
+                    break
+
+                }
+              } else {
+                var next = achievementObj.achievementLVL1amount
+                if ( achievement.type == 3) {
+                  achievementObj.bestStreak = userAchievement.streak
+                  achievementObj.activity = userAchievement.activity
+                  if ( userAchievement.date == date.substr( 0, 10)) {
+                    achievementObj.today = 1
+                  }
+                }
+                next = achievement.achievementLVL1amount
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL1amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL2amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL2
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL2amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL3amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL3
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL3amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL4amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL4
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL4amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL5amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL5
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL5amount)) {
+                  achievementObj.level++
+                  next = achievementObj.activity
+                }
+                achievementObj.progress = Math.round(achievementObj.activity / parseInt(next) * 100)
+              }
+            }
+
+            achievements.push(achievementObj)
+
+          } 
+*/
+        })
+        return callback(null, {
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify({
+            activity: ''
+            })
+          })
+      }
+    }
+
+    
+  dynamoDb.scan(params, onScan)
+}
+module.exports.getAchievementsByUser = (event, context, callback) => {
+  if(!setUserInfo(event)) {
+    console.error('Authentication Failed')
+    callback(new Error('You are unauthorized to perform this action.'))
+    return
+  }
+  var userID = event.pathParameters.userID
+
+  var params = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    ScanIndexForward: false,
+  }
+
+  console.log('Scanning achievement table.')
+  const onScan = (err, data) => {
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
+    } else {
+      console.log('Scan succeeded.')
+      getUserAchievements(userID).then(res => {
+
+        var achievements = new Array()
+        data.Items.forEach((achievement, index) => {
+            var userAchievement = {}
+            var achievementObj = {
+              achievementID: achievement.achievementID,
+              achievementType: achievement.type,
+              name: achievement.name,
+              achievementMeasure: achievement.achievementMeasure,
+              achievementDesc: achievement.achievementDesc,
+              lvl1Desc: achievement.achievementLVL1,
+              lvl2Desc: achievement.achievementLVL2,
+              lvl3Desc: achievement.achievementLVL3,
+              lvl4Desc: achievement.achievementLVL4,
+              lvl5Desc: achievement.achievementLVL5,
+              currentLevelDesc: achievement.achievementLVL1,
+              level: 0,
+              progress: 0,
+              today: 0
+            }
+
+
+            if (userAchievement = res.Items.find(item => { return item.achievementID === achievementObj.achievementID })) {
+              achievementObj.activity = userAchievement.activity
+
+              if ( achievement.type == 1) {
+                achievementObj.level = userAchievement.activity
+                switch ( achievementObj.level) {
+                  case 1:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL2
+                    break
+                  case 2:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL3
+                    break
+                  case 3:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL4
+                    break
+                  case 4:
+                  achievementObj.currentLevelDesc = achievement.achievementLVL5
+                    break
+                  case 5:
+                  achievementObj.currentLevelDesc = "Maksimitaso saavutettu"
+                    break
+
+                }
+              } else {
+                var next = achievementObj.achievementLVL1amount
+                if ( achievement.type == 3) {
+                  achievementObj.bestStreak = userAchievement.streak
+                  achievementObj.activity = userAchievement.activity
+                }
+                next = achievement.achievementLVL1amount
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL1amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL2amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL2
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL2amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL3amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL3
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL3amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL4amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL4
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL4amount)) {
+                  achievementObj.level++
+                  next = achievement.achievementLVL5amount
+                  achievementObj.currentLevelDesc = achievement.achievementLVL5
+                }
+                if ( achievementObj.activity >= parseInt(achievement.achievementLVL5amount)) {
+                  achievementObj.level++
+                  next = achievementObj.activity
+                }
+                achievementObj.progress = Math.round(achievementObj.activity / parseInt(next) * 100)
+              }
+            }
+
+            achievements.push(achievementObj)
+
+        })
+
+        return callback(null, {
+          statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          },
+          body: JSON.stringify({
+            achievements: achievements.sort(function( a,b) {
+              if (typeof(a.activity) !== 'undefined') return -1
+              if (typeof(b.activity) !== 'undefined') return 1
+              if (a.activity < b.activity) return -1
+              if (a.activity > b.activity) return 1
+
+            })
+          })
+        })
+      })
+    }
+  }
+  dynamoDb.scan(params, onScan)
+}
+const getUserAchievements = (userID) => {
+  var params = {
+    TableName: process.env.ACHIEVEMENT_ACTIVITY_TABLE,
+    KeyConditionExpression: 'userID = :user',
+    ExpressionAttributeValues: {
+      ':user': userID
+    },
+  }
+
+  console.log('Scanning achievement activity table.')
+  const onScan = (err, data) => {
+
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
+    } else {
+      console.log('Scan succeeded.')
+      return data.Items
+    }
+  }
+
+  return dynamoDb.query(params, onScan).promise()
+}
+
+
 const submitAchievement = achievement => {
   console.log('Submitting achievement')
   console.log(achievement)
@@ -498,6 +756,31 @@ module.exports.getUserActivity = (event, context, callback) => {
     }
   }
   dynamoDb.scan(params, onScan)
+}
+
+const getAchievement = (achievementID) => {
+  var params = {
+    TableName: process.env.ACHIEVEMENT_TABLE,
+    KeyConditionExpression: 'achievementID = :achievementID',
+    ExpressionAttributeValues: {
+      ':achievementID': achievementID
+    },
+  }
+
+  console.log('Scanning achievement activity table.')
+  const onScan = (err, data) => {
+
+    if (err) {
+      console.log('Scan failed to load data. Error JSON:', JSON.stringify(err, null, 2))
+      callback(err)
+    } else {
+      console.log('Scan succeeded.')
+      console.log( data)
+      return data.Items
+    }
+  }
+
+  return dynamoDb.query(params, onScan).promise()
 }
 
 

@@ -170,6 +170,22 @@ functions:
           path: admin/achievement/delete
           method: post
           cors: true
+  getAchievementActivity:
+    memorySize: 128
+    handler: admin.getAchievementActivity
+    events:
+      - http:
+          path: admin/achievement/{achievementID}
+          method: get
+          cors: true
+  getAchievementsByUser:
+    memorySize: 128
+    handler: admin.getAchievementsByUser
+    events:
+      - http:
+          path: admin/user/achievement/{userID}
+          method: get
+          cors: true
   getUserActivity:
     memorySize: 128
     handler: admin.getUserActivity
