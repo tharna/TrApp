@@ -541,21 +541,21 @@ module.exports.getAchievements = (event, context, callback) => {
               if ( achievement.type == 1) {
                 achievementObj.level = userAchievement.activity
                 switch ( achievementObj.level) {
-                  case 1:
+                case 1:
                   achievementObj.currentLevelDesc = achievement.achievementLVL2
-                    break
-                  case 2:
+                  break
+                case 2:
                   achievementObj.currentLevelDesc = achievement.achievementLVL3
-                    break
-                  case 3:
+                  break
+                case 3:
                   achievementObj.currentLevelDesc = achievement.achievementLVL4
-                    break
-                  case 4:
+                  break
+                case 4:
                   achievementObj.currentLevelDesc = achievement.achievementLVL5
-                    break
-                  case 5:
-                  achievementObj.currentLevelDesc = "Maksimitaso saavutettu"
-                    break
+                  break
+                case 5:
+                  achievementObj.currentLevelDesc = 'Maksimitaso saavutettu'
+                  break
 
                 }
               } else {
