@@ -245,7 +245,6 @@
     </el-dialog>
 
 
-
   </div>
 </template>
 <script>
@@ -438,6 +437,17 @@ export default {
     },
     showAchievement: function (achievementID, event) {
       this.loading = true
+      axios.get('/admin/achievement/' + achievementID).then(response => {
+        console.log(response)
+      }).catch(err => {
+        console.log(err)
+        this.loadingDel = false
+        this.$notify({
+          title: 'Virhe',
+          message: 'Tietojen haku ei onnistunut',
+          type: 'error'
+        })
+      })
     },
     formatDate: function (row, column, value, index) {
       return moment(String(value)).format('DD.MM.YYYY')

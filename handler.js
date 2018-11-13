@@ -277,7 +277,7 @@ module.exports.getUser = (event, context, callback) => {
   const calculateLevels = (item) => {
     var sum = 0
     var level = 0
-    const levelMultiplier = 8
+    const levelMultiplier = 2
     item.current = {}
     while (sum <= item.level.fire) {
       level++
