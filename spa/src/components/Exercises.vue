@@ -11,8 +11,8 @@
         </div>
         <hr>
       </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="(exercise, index) in exercises">
-          <div class="card" v-show="type == exercise.exercisename || type == 'Kaikki'">
+      <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="(exercise, index) in filteredExercises">
+          <div class="card">
             <div class="card-divider" v-bind:class="exercise.exercisename">
               {{ exercise.exercisetype }} {{ exercise.amount | time }} 
               <el-rate
@@ -60,6 +60,8 @@ export default {
     return {
       exercises: [
       ],
+      filteredExercises: [
+      ],
       type: 'Kaikki',
       loaded: false,
       loading: false,
@@ -73,7 +75,10 @@ export default {
   methods: {
     getExercises: function () {
       axios.get('/data')
-        .then(response => { this.exercises = response.data.exercises })
+        .then(response => {
+          this.exercises = response.data.exercises
+          this.filteredExercises = this.exercises
+        })
     },
     deleteConfirm: function (index) {
       this.deleteConfirmVisible = true
@@ -162,6 +167,11 @@ export default {
         this.loaded = false
         this.$emit('update')
       }
+    },
+    type: function () {
+      let currentType = this.type
+      console.log(currentType)
+      this.filteredExercises = this.exercises.filter(function (ex) { return (currentType === ex.exercisename) })
     }
   }
 }
