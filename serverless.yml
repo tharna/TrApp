@@ -6,12 +6,12 @@ provider:
   region: eu-west-1
 
   environment:
-    USER_TABLE: "userdata-${opt:stage, self:provider.stage}"
-    EXERCISE_TABLE: "exercisedata-${opt:stage, self:provider.stage}"
-    ACTIVITY_TABLE: "activitydata-${opt:stage, self:provider.stage}"
-    ACHIEVEMENT_TABLE: "achievements-${opt:stage, self:provider.stage}"
-    ACHIEVEMENT_ACTIVITY_TABLE: "achievementActivity-${opt:stage, self:provider.stage}"
-    QUEST_TABLE: "quest-${opt:stage, self:provider.stage}"
+    USER_TABLE: "pum-userdata-${opt:stage, self:provider.stage}"
+    EXERCISE_TABLE: "pum-exercisedata-${opt:stage, self:provider.stage}"
+    ACTIVITY_TABLE: "pum-activitydata-${opt:stage, self:provider.stage}"
+    ACHIEVEMENT_TABLE: "pum-achievements-${opt:stage, self:provider.stage}"
+    ACHIEVEMENT_ACTIVITY_TABLE: "pum-achievementActivity-${opt:stage, self:provider.stage}"
+    QUEST_TABLE: "pum-quest-${opt:stage, self:provider.stage}"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -334,5 +334,5 @@ plugins:
 
 custom:
   client:
-    bucketName: app.aikojentanssi.fi
+    bucketName: app.traininglarp.fi
     distributionFolder: spa/dist

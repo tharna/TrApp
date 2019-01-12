@@ -965,35 +965,29 @@ mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
 
 const memberCount = (groupID) => {
   const groups = [{
-    value: 'Kekäle',
-    members: 5 
+    value: 'Kettu',
+    members: 8 
   }, {
-    value: 'Kvantti',
-    members: 3
+    value: 'Joutsen',
+    members: 6
   }, {
-    value: 'Loharit',
-    members: 9
+    value: 'Saukko',
+    members: 6
   }, {
-    value: 'Lopparit',
-    members: 9
+    value: 'Hirvi',
+    members: 6
   }, {
-    value: 'Manse',
-    members: 7
+    value: 'Ilves',
+    members: 8
   }, {
-    value: 'Pöllöt',
-    members: 4 
-  }, {
-    value: 'Tammi',
+    value: 'Leijona',
     members: 6
   }, {
     value: 'Karhut',
-    members: 5
+    members: 3
   }, {
-    value: 'Iku',
-    members: 5
-  }, {
-    value: 'Mekanistit',
-    members: 8
+    value: 'Susi',
+    members: 6
   }, {
     value: 'Yhteinen',
     members: 61
