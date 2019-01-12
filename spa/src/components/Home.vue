@@ -28,7 +28,7 @@
   </div>
     <div v-else-if="!authenticated" style="text-align:center; padding-top: 50px;">
       <img src="/liikuntalarp_logo2.png"></img>
-      <h3>Aikojen Tanssi - TreeniApp</h3>
+      <h3>Traininglarp - TreeniApp</h3>
           <el-button
             @click="auth.login()"
             type="primary" 
@@ -70,7 +70,7 @@ export default {
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))
-    this.admin = this.authenticated && (user['https://app.aikojentanssi.fi/group'] === 99)
+    this.admin = this.authenticated && (user['https://app.traininglarp.fi/group'] === 99)
   }
 
 }

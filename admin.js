@@ -809,7 +809,7 @@ mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
   userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] })
   user = userInfo.email
 
-  var auth = (userInfo['https://app.aikojentanssi.fi/group'] == 99)
+  var auth = (userInfo['https://app.traininglarp.fi/group'] == 99)
   return auth
 }
 const memberCount = (groupID) => {

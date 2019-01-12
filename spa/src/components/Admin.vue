@@ -47,7 +47,7 @@ export default {
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))
-    this.admin = this.authenticated && (user['https://app.aikojentanssi.fi/group'] === 99)
+    this.admin = this.authenticated && (user['https://app.traininglarp.fi/group'] === 99)
     if (!this.admin) {
       router.replace('/home')
     }

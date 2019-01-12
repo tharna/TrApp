@@ -329,7 +329,7 @@ module.exports.getQuests = (event, context, callback) => {
     },
     FilterExpression: 'groupID = :group OR groupID = :all',
     ExpressionAttributeValues: {
-      ':group': userInfo['https://app.aikojentanssi.fi/group'].toString(),
+      ':group': userInfo['https://app.traininglarp.fi/group'].toString(),
       ':all': 'Yhteinen',
     }
   }
@@ -823,7 +823,7 @@ const updateLevels = (amount, exercisename) => {
     },
     ExpressionAttributeValues: {
       ':amount': amount,
-      ':group': userInfo['https://app.aikojentanssi.fi/group']
+      ':group': userInfo['https://app.traininglarp.fi/group']
     },
     ReturnValues:'UPDATED_NEW',
   }
