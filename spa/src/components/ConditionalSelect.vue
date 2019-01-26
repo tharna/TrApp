@@ -4,7 +4,7 @@
     <div id="ConditionalSelect">
       <div class="select">
         <select v-model="category" name="category" @change="sync">
-          <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+          <option v-for="category in categories" :value="category.id">{{ category.title }}</option>
         </select>
       </div>
 
@@ -18,13 +18,13 @@
         <el-input-number v-model="amount" :min="1" :step="1" @change="sync"></el-input-number> <el-tooltip content="1 piste = n. 15 minuttia liikuntaa">
           <i class="el-icon-question"></i>
         </el-tooltip>
-        <br>
+        <!--br>
         Treenin rankkuus: <el-tooltip content="Kuinka raskaaksi koit treenin oman arviosi mukaan.">
           <i class="el-icon-question"></i>
         </el-tooltip><br>
         <el-radio v-model="modifier" label="Kevyt">Kevyt</el-radio>
         <el-radio v-model="modifier" label="Normaali">Normaali</el-radio>
-        <el-radio v-model="modifier" label="Rankka">Rankka</el-radio>
+        <el-radio v-model="modifier" label="Rankka">Rankka</el-radio-->
       </div>
             <el-date-picker
                                               v-model="date"

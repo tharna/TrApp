@@ -332,7 +332,13 @@ resources:
 plugins:
   - serverless-finch
 
+package:
+  exclude:
+    - spa/**
+    - .git/**
+
 custom:
   client:
     bucketName: app.traininglarp.fi
     distributionFolder: spa/dist
+    errorDoc: index.html

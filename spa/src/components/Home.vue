@@ -10,9 +10,9 @@
           <el-tab-pane label="Tehtävät" name="third">
             <quests :activeName="activeName"></quests>
           </el-tab-pane>
-          <el-tab-pane label="Urotyöt" name="fourth">
+          <!--el-tab-pane label="Urotyöt" name="fourth">
             <achievements :activeName="activeName"></achievements>
-          </el-tab-pane>
+          </el-tab-pane-->
           <el-tab-pane label="Tili" name="logout">
 
           <el-button

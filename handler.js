@@ -279,11 +279,15 @@ module.exports.getUser = (event, context, callback) => {
     var level = 0
     const levelMultiplier = 2
     item.current = {}
+    item.points = {}
+    item.next = {}
     while (sum <= item.level.fire) {
       level++
       item.level.fire = item.level.fire - sum
       sum = level * levelMultiplier
     }
+    item.points.fire = item.level.fire
+    item.next.fire = sum
     item.level.fire = Math.round(item.level.fire / sum * 100)
     item.current.fire = level - 1
     sum = 0; level = 0
@@ -292,6 +296,8 @@ module.exports.getUser = (event, context, callback) => {
       item.level.water = item.level.water - sum
       sum = level * levelMultiplier
     }
+    item.points.water = item.level.water
+    item.next.water = sum
     item.level.water = Math.round(item.level.water / sum * 100)
     item.current.water = level - 1
     sum = 0; level = 0
@@ -300,6 +306,8 @@ module.exports.getUser = (event, context, callback) => {
       item.level.earth = item.level.earth - sum
       sum = level * levelMultiplier
     }
+    item.points.earth = item.level.earth
+    item.next.earth = sum
     item.level.earth = Math.round(item.level.earth / sum * 100)
     item.current.earth = level - 1
     sum = 0; level = 0
@@ -308,6 +316,8 @@ module.exports.getUser = (event, context, callback) => {
       item.level.air = item.level.air - sum
       sum = level * levelMultiplier
     }
+    item.points.air = item.level.air
+    item.next.air = sum
     item.level.air = Math.round(item.level.air / sum * 100)
     item.current.air = level - 1
     return item

@@ -24,21 +24,21 @@
 
     <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :lg="12">
-        Tuli (Taso {{ user.current.fire }}):
+        Tuli (Taso {{ user.current.fire }}, {{ user.points.fire }} / {{ user.next.fire }}):
         <el-progress-xp :percentage="user.level.fire" :stroke-width="16" color="red"></el-progress-xp>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="12">
-        Vesi (Taso {{ user.current.water }}):
+        Vesi (Taso {{ user.current.water }}, {{ user.points.water }} / {{ user.next.water }}):
         <el-progress-xp :percentage="user.level.water" :stroke-width="16" color="blue"></el-progress-xp>
       </el-col>
     </el-row>
     <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :lg="12">
-        Maa (Taso {{ user.current.earth }}):
+        Maa (Taso {{ user.current.earth }}, {{ user.points.earth }} / {{ user.next.earth }}):
         <el-progress-xp :percentage="user.level.earth" :stroke-width="16" color="green"></el-progress-xp>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="12">
-        Ilma (Taso {{ user.current.air }}):
+        Ilma (Taso {{ user.current.air }}, {{ user.points.air }} / {{ user.next.air }}):
         <el-progress-xp color="yellow" :percentage="user.level.air" :stroke-width="16"></el-progress-xp>
       </el-col>
     </el-row>
@@ -69,11 +69,11 @@ export default {
         { name: 'Ei' }
       ],
       categories: [
-        { id: '0', name: '-- Valitse laji --', selected: true },
-        { id: '1', name: 'Lihaskunto', selected: true },
-        { id: '2', name: 'Kestävyys', selected: false },
-        { id: '3', name: 'Ketteryys', selected: false },
-        { id: '4', name: 'Kehonhuolto', selected: false }
+        { id: '0', name: '-- Valitse laji --', selected: true, title: '-- Valitse laji --' },
+        { id: '1', name: 'Lihaskunto', selected: false, title: 'Lihaskunto (Tuli)' },
+        { id: '2', name: 'Kestävyys', selected: false, title: 'Kestävyys (Maa)' },
+        { id: '3', name: 'Ketteryys', selected: false, title: 'Ketteryys (Vesi)' },
+        { id: '4', name: 'Kehonhuolto', selected: false, title: 'Kehonhuolto (Ilma)' }
       ],
       subcategories: [
         { id: '1', category_id: '1', name: 'Kuntosali', selected: true },
