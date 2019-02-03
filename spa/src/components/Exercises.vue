@@ -15,7 +15,7 @@
           <div class="card">
             <div class="card-divider" v-bind:class="exercise.exercisename">
               {{ exercise.exercisetype }} {{ exercise.amount | time }} 
-              <el-rate
+              <!--el-rate
                  style="display: inline-block; float: right;"
                  disabled
                  :max="3"
@@ -26,7 +26,7 @@
                  :colors="['#555', '#555', '#555']"
                  v-bind:value="exercises[index] | rating"
                  >
-              </el-rate>
+              </el-rate-->
 
             </div>
             <div class="card-section">
