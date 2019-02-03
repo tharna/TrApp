@@ -170,8 +170,11 @@ export default {
     },
     type: function () {
       let currentType = this.type
-      console.log(currentType)
-      this.filteredExercises = this.exercises.filter(function (ex) { return (currentType === ex.exercisename) })
+      if (this.type === 'Kaikki') {
+        this.filteredExercises = this.exercises
+      } else {
+        this.filteredExercises = this.exercises.filter(function (ex) { return (currentType === ex.exercisename) })
+      }
     }
   }
 }
