@@ -341,4 +341,4 @@ custom:
   client:
     bucketName: app.traininglarp.fi
     distributionFolder: spa/dist
-    errorDoc: index.html
+    errorDocument: index.html
