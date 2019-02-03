@@ -86,5 +86,11 @@ a {
 .el-tabs__nav-next, .el-tabs__nav-prev {
   padding: 0 20px;
 }
+#tab-first {
+  padding-left: 20px;
+}
+#tab-logout {
+  padding-right: 20px;
+}
 </style>
 
