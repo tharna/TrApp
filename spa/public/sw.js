@@ -1,7 +1,7 @@
 var CACHE_NAME = 'trapp-cache-v1';
 var urlsToCache = [
-  '/index.html',
-  '/home'
+  '/',
+  '/index.html'
 ];
 
 self.addEventListener('install', function(event) {
