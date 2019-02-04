@@ -92,5 +92,8 @@ a {
 #tab-logout {
   padding-right: 20px;
 }
+.el-tabs__content {
+  padding: 20px;
+}
 </style>
 
