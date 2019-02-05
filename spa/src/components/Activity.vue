@@ -1,15 +1,16 @@
 <template>
-  <div>
-    <el-row>
+ <div>
+    <el-row class="bottom">
       <el-col :span="24">
         <div style="padding: 5px 20px; text-align: center;">
           <el-button @click="addExerciseVisible = true" type="primary" round>Lisää suoritus</el-button>
     </div>
       </el-col>
     </el-row>
-    <el-row>
+    <el-row v-loading="activityLoading">
       <el-col :span="24">
-        Aktiivisuus: <el-radio v-model="period" @change="getActivity" label="Viikko">Viikko</el-radio>
+        <h3>Aktiivisuus</h3> 
+        <el-radio v-model="period" @change="getActivity" label="Viikko">Viikko</el-radio>
         <el-radio v-model="period" @change="getActivity" label="Kuukausi">Kuukausi</el-radio>
         <el-radio v-model="period" @change="getActivity" label="Treenijakso">Treenijakso</el-radio>
         <trend
@@ -22,29 +23,31 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="10">
+    <h3>Tasot</h3>
+    <el-row :gutter="10" v-loading="userLoading">
       <el-col :xs="24" :sm="24" :lg="12">
-        Tuli (Taso {{ user.current.fire }}, {{ user.points.fire }} / {{ user.next.fire }}):
-        <el-progress-xp :percentage="user.level.fire" :stroke-width="16" color="red"></el-progress-xp>
+        <b>Tuli: {{ user.current.fire }}</b> ({{ user.points.fire }} / {{ user.next.fire }})
+        <el-progress-xp :text-inside="true" :percentage="user.level.fire" :stroke-width="18" color="red"></el-progress-xp>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="12">
-        Vesi (Taso {{ user.current.water }}, {{ user.points.water }} / {{ user.next.water }}):
-        <el-progress-xp :percentage="user.level.water" :stroke-width="16" color="blue"></el-progress-xp>
-      </el-col>
-    </el-row>
-    <el-row :gutter="10">
-      <el-col :xs="24" :sm="24" :lg="12">
-        Maa (Taso {{ user.current.earth }}, {{ user.points.earth }} / {{ user.next.earth }}):
-        <el-progress-xp :percentage="user.level.earth" :stroke-width="16" color="green"></el-progress-xp>
-      </el-col>
-      <el-col :xs="24" :sm="24" :lg="12">
-        Ilma (Taso {{ user.current.air }}, {{ user.points.air }} / {{ user.next.air }}):
-        <el-progress-xp color="yellow" :percentage="user.level.air" :stroke-width="16"></el-progress-xp>
+        <b>Vesi: {{ user.current.water }}</b> ({{ user.points.water }} / {{ user.next.water }})
+        <el-progress-xp :text-inside="true" :percentage="user.level.water" :stroke-width="18" color="blue"></el-progress-xp>
       </el-col>
     </el-row>
-        <el-dialog
+    <el-row :gutter="10">
+      <el-col :xs="24" :sm="24" :lg="12">
+        <b>Maa: {{ user.current.earth }}</b> ({{ user.points.earth }} / {{ user.next.earth }})
+        <el-progress-xp :text-inside="true" :percentage="user.level.earth" :stroke-width="18" color="green"></el-progress-xp>
+      </el-col>
+      <el-col :xs="24" :sm="24" :lg="12">
+        <b>Ilma: {{ user.current.air }}</b> ({{ user.points.air }} / {{ user.next.air }})
+        <el-progress-xp :text-inside="true" color="yellow" :percentage="user.level.air" :stroke-width="18"></el-progress-xp>
+      </el-col>
+    </el-row>
+       <el-dialog
             title="Lisää suoritus"
             :visible.sync="addExerciseVisible"
+            :append-to-body="true"
             width="80%">
         <conditional-select :categories="categories" :subcategories="subcategories" v-model="treeni" @update="updateData"></conditional-select>
         </el-dialog>
@@ -116,9 +119,13 @@ export default {
       activity_cache: [],
       user: {
         current: [],
-        level: []
+        level: [],
+        points: [],
+        next: []
       },
-      period: 'Viikko'
+      period: 'Viikko',
+      userLoading: true,
+      activityLoading: true
 
     }
   },
@@ -133,6 +140,7 @@ export default {
           .then(response => {
             this.activity_cache[this.period] = response.data.activity // .activity.map((amount) => { return amount.total })
             this.activity = this.activity_cache[this.period]
+            this.activityLoading = false
           })
       } else {
         this.activity = this.activity_cache[this.period]
@@ -140,7 +148,7 @@ export default {
     },
     getUserData: function () {
       axios.get('/data/user')
-        .then(response => { this.user = response.data.user })
+        .then(response => { this.user = response.data.user; this.userLoading = false })
     },
     updateData: function () {
       this.getUserData()
@@ -157,3 +165,18 @@ export default {
 
 }
 </script>
+
+<style scoped="true">
+.el-col {
+  padding-bottom: 20px;
+}
+/*
+.bottom.el-row {
+  position: fixed;
+  bottom: 40px;
+  width: 100%;
+  margin-left: -20px;
+}
+*/
+</style>
+

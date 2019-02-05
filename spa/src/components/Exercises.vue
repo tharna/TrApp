@@ -1,15 +1,24 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="24">
-        <div style="padding: 5px 20px; text-align: center;">
+      <el-col :xs="12" :sm="6" :md="4">
          <el-radio v-model="type" label="Kaikki">Kaikki</el-radio>
+      </el-col>
+      <el-col :xs="12" :sm="6" :md="4">
          <el-radio class="Lihaskunto" style="padding: 8px; border-radius: 15px;" v-model="type" label="Lihaskunto">Lihaskunto</el-radio>
+      </el-col>
+      <el-col :xs="12" :sm="6" :md="4">
          <el-radio class="Ketteryys" style="padding: 8px; border-radius: 15px;" v-model="type" label="Ketteryys">Ketteryys</el-radio>
+      </el-col>
+      <el-col :xs="12" :sm="6" :md="4">
          <el-radio class="Kestävyys" style="padding: 8px; border-radius: 15px;" v-model="type" label="Kestävyys">Kestävyys</el-radio>
+      </el-col>
+      <el-col :xs="12" :sm="6" :md="4">
          <el-radio class="Kehonhuolto" style="padding: 8px; border-radius: 15px;" v-model="type" label="Kehonhuolto">Kehonhuolto</el-radio>
-        </div>
+      </el-col>
+    </el-row>
         <hr>
+    <el-row v-loading="exercisesLoading">
       </el-col>
       <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="(exercise, index) in filteredExercises">
           <div class="card">
@@ -66,7 +75,8 @@ export default {
       loaded: false,
       loading: false,
       deleteConfirmVisible: false,
-      currentIndex: 0
+      currentIndex: 0,
+      exercisesLoading: true
     }
   },
   components: {
@@ -74,10 +84,12 @@ export default {
   },
   methods: {
     getExercises: function () {
+      this.exercisesLoading = true
       axios.get('/data')
         .then(response => {
           this.exercises = response.data.exercises
           this.filteredExercises = this.exercises
+          this.exercisesLoading = false
         })
     },
     deleteConfirm: function (index) {
@@ -179,7 +191,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped="true">
 .Lihaskunto {
   background-color: #ff4949; 
   color: #fff;
@@ -217,5 +229,8 @@ export default {
 .el-icon-circle-check-m:before{
   /*content: "\1F4AA";*/
   content: "\1F605";
+}
+.el-col {
+  padding-bottom: 5px;
 }
 </style>

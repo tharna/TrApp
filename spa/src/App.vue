@@ -14,8 +14,11 @@ import AuthService from './auth/AuthService'
 import Vue from 'vue'
 import Element from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/fi'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import 'swiper/dist/css/swiper.css'
 Vue.use(Element, { locale })
 
+Vue.use(VueAwesomeSwiper)
 const auth = new AuthService()
 
 const { login, logout, authenticated, authNotifier } = auth

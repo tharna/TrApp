@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row v-loading="questLoading">
       <el-col :xs="24" :sm="12" :md="8" :lg="6" style="padding: 10px;" v-for="quest in quests">
           <div class="card">
             <div class="card-divider" v-bind:class="questType(quest)">
@@ -20,6 +20,7 @@
     <el-dialog
         title="Lisää suoritus"
         :visible.sync="addQuestActivityVisible"
+        :append-to-body="true"
         width="80%">
       <div v-html="currentQuest.questDesc"></div><br>
       <div>Oma suoritus yhteensä: {{ currentQuest.questActivity }}</div>
@@ -40,6 +41,7 @@
     <el-dialog
         :title="currentQuest.name"
         :visible.sync="showQuestActivityVisible"
+        :append-to-body="true"
         width="80%">
       <h2>Tehtävän kuvaus</h2>
       <div v-html="currentQuest.questDesc"></div>
@@ -71,7 +73,8 @@ export default {
       showQuestActivityVisible: false,
       loading: false,
       loaded: false,
-      questActivity: 1
+      questActivity: 1,
+      questLoading: true
     }
   },
   methods: {
@@ -84,6 +87,7 @@ export default {
             if (a.startDate > b.startDate) return 1
             if (a.startDate < b.startDate) return -1
           })
+          this.questLoading = false
         })
     },
     postQuest: function (questID) {
@@ -141,7 +145,10 @@ export default {
 
 }
 </script>
-<style>
+<style scoped="true">
+.card {
+  border-radius: 5px;
+}
 .card .success {
   background-color: #13ce66; 
   color: #fff;
