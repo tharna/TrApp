@@ -101,7 +101,7 @@ export default {
   },
   created () {
     var user = JSON.parse(localStorage.getItem('user_details'))
-    this.admin = this.authenticated && (user['https://app.traininglarp.fi/group'] === 99)
+    this.admin = this.authenticated && (user['https://app.traininglarp.fi/is_admin'])
   },
   computed: {
     swiper () {
@@ -120,7 +120,7 @@ export default {
 a {
   cursor: pointer;
 }
-.el-tabs {
+.el-tabs__header {
   position: fixed;
   top: 0px;
   width: 100%;
@@ -138,7 +138,7 @@ a {
 #tab-logout {
   padding-right: 20px;
 }
-.swiper-container {
+.el-tab-pane {
   margin-top: 50px !important;
 }
 .swiper-slide > div {

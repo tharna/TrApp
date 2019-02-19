@@ -24,7 +24,8 @@
     </el-row>
 
     <h3>Tasot</h3>
-    <el-row :gutter="10" v-loading="userLoading">
+    <div v-loading="userLoading">
+    <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :lg="12">
         <b>Tuli: {{ user.current.fire }}</b> ({{ user.points.fire }} / {{ user.next.fire }})
         <el-progress-xp :text-inside="true" :percentage="user.level.fire" :stroke-width="18" color="red"></el-progress-xp>
@@ -44,6 +45,7 @@
         <el-progress-xp :text-inside="true" color="yellow" :percentage="user.level.air" :stroke-width="18"></el-progress-xp>
       </el-col>
     </el-row>
+    </div>
        <el-dialog
             title="Lisää suoritus"
             :visible.sync="addExerciseVisible"
@@ -82,7 +84,7 @@ export default {
         { id: '1', category_id: '1', name: 'Kuntosali', selected: true },
         { id: '2', category_id: '1', name: 'Bodypump', selected: false },
         { id: '3', category_id: '1', name: 'Kamppailulajit', selected: false },
-        { id: '4', category_id: '1', name: 'Megazone', selected: false },
+        /* { id: '4', category_id: '1', name: 'Megazone', selected: false }, */
         { id: '5', category_id: '1', name: 'Ammunta', selected: false },
         { id: '6', category_id: '1', name: 'Boffaus', selected: false },
         { id: '31', category_id: '1', name: 'Kehopainotreeni', selected: false },
@@ -108,11 +110,11 @@ export default {
         { id: '22', category_id: '4', name: 'Jooga', selected: false },
         { id: '23', category_id: '4', name: 'Vesijuoksu', selected: false },
         { id: '24', category_id: '4', name: 'Tasapainoharjoittelu', selected: false },
-        { id: '25', category_id: '4', name: 'Kehonhuolto', selected: false },
+        /* { id: '25', category_id: '4', name: 'Kehonhuolto', selected: false }, */
         { id: '26', category_id: '4', name: 'Snorklaus', selected: false },
         { id: '27', category_id: '4', name: 'Fysioterapia', selected: false },
-        { id: '28', category_id: '4', name: 'hyötyliikunta', selected: false },
-        { id: '29', category_id: '4', name: 'rauhalliset lajit', selected: false },
+        { id: '28', category_id: '4', name: 'Hyötyliikunta', selected: false },
+        { id: '29', category_id: '4', name: 'Rauhalliset lajit', selected: false },
         { id: '103', category_id: '4', name: 'Muu kehonhuolto', selected: false }
       ],
       activity: [],

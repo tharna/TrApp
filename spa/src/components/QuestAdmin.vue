@@ -18,7 +18,7 @@
       label="Heimo"
       width=120
       :filter-method="filterGroup"
-      :filters="[{ text: 'Yhteinen', value: 'Yhteinen'}, { text: 'Kekäle', value: 'Kekäle' }, { text: 'Kvantti', value: 'Kvantti' }, { text: 'Loharit', value: 'Loharit' }, { text: 'Lopparit', value: 'Lopparit' }, { text: 'Manse', value: 'Manse' }, { text: 'Pöllöt', value: 'Pöllöt' }, { text: 'Tammi', value: 'Tammi' }, { text: 'Karhut', value: 'Karhut' }, { text: 'Iku', value: 'Iku' }, { text: 'Mekanistit', value: 'Mekanistit' }, { text: 'NPC', value: 'NPC' }, { text: 'PJ', value: 99}]"
+      :filters="[{ text: 'Yhteinen', value: 'Yhteinen'}, { text: 'Karhut', value: 'Karhut' }, { text: 'Ketut', value: 'Ketut' }, { text: 'Joutsenet', value: 'Joutsenet' }, { text: 'Ilvekset', value: 'Ilvekset' }, { text: 'Saukot', value: 'Saukot' }, { text: 'Sudet', value: 'Sudet' }, { text: 'Hirvet', value: 'Hirvet' }, { text: 'Jalopeurat', value: 'Jalopeurat' }, { text: 'NPC', value: 'NPC' }, { text: 'PJ', value: 99}]"
       filter-placement="bottom-end"
       sortable>
     </el-table-column>
@@ -45,6 +45,7 @@
     <el-dialog
         title="Lisää viikkotehtävä"
         :visible.sync="addQuestVisible"
+        :append-to-body="true"
         width="80%">
         Tehtävän nimi
         <el-input v-model="questName" placeholder="Tehtävän nimi"></el-input>
@@ -128,6 +129,7 @@
     <el-dialog
         title="Muokkaa viikkotehtävää"
         :visible.sync="editQuestVisible"
+        :append-to-body="true"
         width="80%">
         Tehtävän nimi
         <el-input v-model="EquestName" placeholder="Tehtävän nimi"></el-input>
@@ -211,6 +213,7 @@
     <el-dialog
         :title="currentQuest.name"
         :visible.sync="showQuestActivityVisible"
+        :append-to-body="true"
         width="80%">
       <h2>Tehtävän kuvaus</h2>
       <div v-html="currentQuest.questDesc"></div>
@@ -266,35 +269,29 @@ export default {
         value: 'Kaikki',
         label: 'Kaikki'
       }, {
-        value: 'Kekäle',
-        label: 'Kekäle'
-      }, {
-        value: 'Kvantti',
-        label: 'Kvantti'
-      }, {
-        value: 'Loharit',
-        label: 'Loharit'
-      }, {
-        value: 'Lopparit',
-        label: 'Lopparit'
-      }, {
-        value: 'Manse',
-        label: 'Manse'
-      }, {
-        value: 'Pöllöt',
-        label: 'Pöllöt'
-      }, {
-        value: 'Tammi',
-        label: 'Tammi'
+        value: 'Ketut',
+        label: 'Ketut'
       }, {
         value: 'Karhut',
         label: 'Karhut'
       }, {
-        value: 'Iku',
-        label: 'Iku'
+        value: 'Joutsenet',
+        label: 'Joutsenet'
       }, {
-        value: 'Mekanistit',
-        label: 'Mekanistit'
+        value: 'Ilvekset',
+        label: 'Ilvekset'
+      }, {
+        value: 'Saukot',
+        label: 'Saukot'
+      }, {
+        value: 'Hirvet',
+        label: 'Hirvet'
+      }, {
+        value: 'Sudet',
+        label: 'Sudet'
+      }, {
+        value: 'Jalopeurat',
+        label: 'Jalopeurat'
       }, {
         value: 'Yhteinen',
         label: 'Yhteinen'
@@ -303,35 +300,29 @@ export default {
         label: 'NPC'
       }],
       groups: [{
-        value: 'Kekäle',
-        label: 'Kekäle'
-      }, {
-        value: 'Kvantti',
-        label: 'Kvantti'
-      }, {
-        value: 'Loharit',
-        label: 'Loharit'
-      }, {
-        value: 'Lopparit',
-        label: 'Lopparit'
-      }, {
-        value: 'Manse',
-        label: 'Manse'
-      }, {
-        value: 'Pöllöt',
-        label: 'Pöllöt'
-      }, {
-        value: 'Tammi',
-        label: 'Tammi'
+        value: 'Ketut',
+        label: 'Ketut'
       }, {
         value: 'Karhut',
         label: 'Karhut'
       }, {
-        value: 'Iku',
-        label: 'Iku'
+        value: 'Joutsenet',
+        label: 'Joutsenet'
       }, {
-        value: 'Mekanistit',
-        label: 'Mekanistit'
+        value: 'Ilvekset',
+        label: 'Ilvekset'
+      }, {
+        value: 'Saukot',
+        label: 'Saukot'
+      }, {
+        value: 'Hirvet',
+        label: 'Hirvet'
+      }, {
+        value: 'Sudet',
+        label: 'Sudet'
+      }, {
+        value: 'Jalopeurat',
+        label: 'Jalopeurat'
       }, {
         value: 'Yhteinen',
         label: 'Yhteinen'

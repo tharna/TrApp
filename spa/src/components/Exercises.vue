@@ -48,6 +48,7 @@
     </el-row>
     <el-dialog     
        title="Poista treeni?"
+       :append-to-body="true"
        :visible.sync="deleteConfirmVisible">
           <el-button @click.native="deleteConfirmVisible = false" round>Ei</el-button>
           <el-button type="primary" :loading="loading" round @click.prevent="deleteExercise()">Kyllä</el-button>

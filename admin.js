@@ -809,34 +809,34 @@ mBuJxeQ0+UXroBVygxgDSmIYdqZ2pvYDdZBPA0oRVKsWjhXucFBm86Huw01yPm/+
   userInfo = jwt.verify(event.headers['Authorization'].substr(7), pubKey, { algorithms: ['RS256'] })
   user = userInfo.email
 
-  var auth = (userInfo['https://app.traininglarp.fi/group'] == 99)
+  var auth = (userInfo['https://app.traininglarp.fi/is_admin'] == 1)
   return auth
 }
 const memberCount = (groupID) => {
   const groups = [{
-    value: 'Kettu',
-    members: 8 
+    value: 'Ketut',
+    members: 9 
   }, {
-    value: 'Joutsen',
-    members: 6
+    value: 'Joutsenet',
+    members: 7
   }, {
-    value: 'Saukko',
-    members: 6
+    value: 'Saukot',
+    members: 7
   }, {
-    value: 'Hirvi',
-    members: 6
+    value: 'Hirvet',
+    members: 7
   }, {
-    value: 'Ilves',
-    members: 8
+    value: 'Ilvekset',
+    members: 9
   }, {
-    value: 'Leijona',
-    members: 6
+    value: 'Jalopeurat',
+    members: 7
   }, {
     value: 'Karhut',
-    members: 3
+    members: 4
   }, {
-    value: 'Susi',
-    members: 6
+    value: 'Sudet',
+    members: 7
   }, {
     value: 'Yhteinen',
     members: 61
