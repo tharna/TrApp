@@ -13,7 +13,7 @@
       prop="group"
       label="Heimo"
       :filter-method="filterGroup"
-      :filters="[{ text: 'Kekäle', value: 'Kekäle' }, { text: 'Kvantti', value: 'Kvantti' }, { text: 'Loharit', value: 'Loharit' }, { text: 'Lopparit', value: 'Lopparit' }, { text: 'Manse', value: 'Manse' }, { text: 'Pöllöt', value: 'Pöllöt' }, { text: 'Tammi', value: 'Tammi' }, { text: 'Karhut', value: 'Karhut' }, { text: 'Iku', value: 'Iku' }, { text: 'Mekanistit', value: 'Mekanistit' }, { text: 'NPC', value: 'NPC' }, { text: 'PJ', value: 99}]"
+      :filters="[{ text: 'Yhteinen', value: 'Yhteinen'}, { text: 'Karhut', value: 'Karhut' }, { text: 'Ketut', value: 'Ketut' }, { text: 'Joutsenet', value: 'Joutsenet' }, { text: 'Ilvekset', value: 'Ilvekset' }, { text: 'Saukot', value: 'Saukot' }, { text: 'Sudet', value: 'Sudet' }, { text: 'Hirvet', value: 'Hirvet' }, { text: 'Jalopeurat', value: 'Jalopeurat' }, { text: 'NPC', value: 'NPC' }, { text: 'PJ', value: 99}]"
       filter-placement="bottom-end"
       sortable>
     </el-table-column>
@@ -109,7 +109,7 @@ export default {
     level: function (row, column, value, index) {
       var sum = 0
       var level = 0
-      const levelMultiplier = 8
+      const levelMultiplier = 2
       while (sum <= value) {
         level++
         value = value - sum
