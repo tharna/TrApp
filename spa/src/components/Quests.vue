@@ -118,6 +118,7 @@ export default {
     },
     addQuestActivity: function (questID) {
       this.currentQuest = this.quests.find(quest => { return quest.questID === questID })
+      if (this.currentQuest.type === '1') this.questActivity = 1
       this.addQuestActivityVisible = true
     },
     showQuestActivity: function (questID) {
